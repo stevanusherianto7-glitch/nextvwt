@@ -58,6 +58,7 @@ export default defineConfig(({ mode }) => {
       dedupe: ['react', 'react-dom', 'zustand'],
     },
     optimizeDeps: {
+      entries: ['index.html', 'src/**/*.{ts,tsx}'],
       include: [
         'react',
         'react-dom',

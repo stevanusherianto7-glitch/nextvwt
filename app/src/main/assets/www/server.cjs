@@ -439,9 +439,20 @@ async function startServer() {
     console.log("[Server] DEV mode aktif: memakai Vite middleware.");
     const vite = await (0, import_vite.createServer)({
       server: { middlewareMode: true },
-      appType: "spa"
+      appType: "custom"
+      // Changed to custom so we handle the HTML
     });
     app.use(vite.middlewares);
+    app.use("*", async (req, res, next) => {
+      try {
+        let template = await import("fs/promises").then((fs) => fs.readFile(import_path.default.resolve(process.cwd(), "index.html"), "utf-8"));
+        template = await vite.transformIndexHtml(req.originalUrl, template);
+        res.status(200).set({ "Content-Type": "text/html" }).end(template);
+      } catch (e) {
+        if (e instanceof Error) vite.ssrFixStacktrace(e);
+        next(e);
+      }
+    });
   } else {
     console.log("[Server] PRODUCTION mode aktif: serve static dist, tanpa Vite middleware/HMR.");
     const distPath = import_path.default.join(process.cwd(), "dist");
