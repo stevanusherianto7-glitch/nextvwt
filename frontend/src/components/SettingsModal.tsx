@@ -1933,6 +1933,28 @@ export function SettingsModal({
           </button>
         </div>
 
+        {/* Android Server Settings (Only visible in Android WebView via Javascript Bridge) */}
+        {typeof window !== "undefined" && (window as any).AndroidBridge && (
+          <>
+            <SectionHeader title="Koneksi Android" />
+            <div className="bg-white px-4 py-3 border-b border-gray-200 flex flex-col gap-2">
+              <button
+                type="button"
+                onClick={() => {
+                  playClickSfx();
+                  (window as any).AndroidBridge.showSetServerDialog();
+                }}
+                className="w-full py-3.5 text-white font-bold bg-blue-600 hover:bg-blue-700 active:bg-blue-800 shadow rounded active:scale-[0.99] transition-all cursor-pointer text-center text-[15px]"
+              >
+                Set IP Server Laptop (LAN)
+              </button>
+              <div className="text-[11px] leading-relaxed text-gray-500 text-center">
+                Tekan tombol di atas untuk mengisi alamat IP Laptop Anda (misal http://192.168.x.x:3000) agar walkie-talkie terhubung secara online.
+              </div>
+            </div>
+          </>
+        )}
+
         {/* Simpan */}
         <div className="p-4 bg-gray-100">
           <button

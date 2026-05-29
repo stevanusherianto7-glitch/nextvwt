@@ -97,6 +97,8 @@ class MainActivity : AppCompatActivity() {
         settings.allowUniversalAccessFromFileURLs = true
         settings.mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
 
+        webView.addJavascriptInterface(WebAppInterface(this), "AndroidBridge")
+
         webView.webViewClient = object : WebViewClient() {
             override fun onReceivedError(view: WebView?, request: WebResourceRequest?, error: WebResourceError?) {
                 if (request?.isForMainFrame == true) {
@@ -200,6 +202,15 @@ class MainActivity : AppCompatActivity() {
             }
             .setNegativeButton("Batal", null)
             .show()
+    }
+
+    inner class WebAppInterface(private val context: Context) {
+        @JavascriptInterface
+        fun showSetServerDialog() {
+            runOnUiThread {
+                this@MainActivity.showSetServerDialog()
+            }
+        }
     }
 
     override fun onDestroy() {
