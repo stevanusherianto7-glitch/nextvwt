@@ -1914,7 +1914,15 @@ export function SettingsModal({
           <span className="text-gray-900 font-medium">{theme}</span>
           <button
             onClick={() => {
-              const themes = ["Klasik (Oranye)", "Taktis (Hijau)", "Siber (Biru)", "Monokrom (Putih)"];
+              const themes = [
+                "Klasik (Oranye)",
+                "Taktis (Hijau)",
+                "Siber (Biru)",
+                "Monokrom (Putih)",
+                "Motif Serat Karbon",
+                "Motif Teraso Terang",
+                "Motif Galaxy Cosmic"
+              ];
               const currentIndex = themes.indexOf(theme);
               const nextIndex = currentIndex === -1 ? 0 : (currentIndex + 1) % themes.length;
               setTheme(themes[nextIndex]);

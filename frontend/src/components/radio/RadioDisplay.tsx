@@ -56,20 +56,54 @@ export function RadioDisplay({
 
   let lcdBg = "bg-[#ff8c00]";
   let lcdShadow = "shadow-[inset_0_6px_22px_rgba(160,50,0,0.95),inset_0_0_12px_rgba(0,0,0,0.4)]";
+  let lcdTextColor = "text-[#1a0c02]";
+  let lcdTextShadow = "0 0 6px rgba(255, 140, 0, 0.95), 0 0 12px rgba(255, 69, 0, 0.8)";
+  let lcdTextBgColor = "text-[#b43200]/15";
+  let displayFrame = "bg-[linear-gradient(160deg,#f8fafc_0%,#cbd5e1_25%,#94a3b8_50%,#cbd5e1_75%,#f1f5f9_100%)] border-[#64748b] border-t-[#ffffff] border-b-[#475569]";
 
   if (theme === "Taktis (Hijau)") {
     lcdBg = "bg-[#4ade80]";
     lcdShadow = "shadow-[inset_0_6px_22px_rgba(20,100,30,0.95),inset_0_0_12px_rgba(0,0,0,0.4)]";
+    lcdTextColor = "text-[#052e16]";
+    lcdTextShadow = "0 0 6px rgba(34, 197, 94, 0.95), 0 0 12px rgba(21, 128, 61, 0.8)";
+    lcdTextBgColor = "text-[#15803d]/15";
   } else if (theme === "Siber (Biru)") {
     lcdBg = "bg-[#38bdf8]";
     lcdShadow = "shadow-[inset_0_6px_22px_rgba(10,80,150,0.95),inset_0_0_12px_rgba(0,0,0,0.4)]";
+    lcdTextColor = "text-[#082f49]";
+    lcdTextShadow = "0 0 6px rgba(56, 189, 248, 0.95), 0 0 12px rgba(2, 132, 199, 0.8)";
+    lcdTextBgColor = "text-[#0284c7]/15";
   } else if (theme === "Monokrom (Putih)") {
     lcdBg = "bg-[#f8fafc]";
     lcdShadow = "shadow-[inset_0_6px_22px_rgba(150,150,160,0.95),inset_0_0_12px_rgba(0,0,0,0.4)]";
+    lcdTextColor = "text-[#0f172a]";
+    lcdTextShadow = "0 0 6px rgba(148, 163, 184, 0.95), 0 0 12px rgba(100, 116, 139, 0.8)";
+    lcdTextBgColor = "text-[#64748b]/15";
+  } else if (theme === "Motif Serat Karbon") {
+    lcdBg = "bg-[#f59e0b]";
+    lcdShadow = "shadow-[inset_0_6px_22px_rgba(180,100,0,0.95),inset_0_0_12px_rgba(0,0,0,0.4)]";
+    lcdTextColor = "text-[#3f1d0b]";
+    lcdTextShadow = "0 0 6px rgba(245, 158, 11, 0.95), 0 0 12px rgba(217, 119, 6, 0.8)";
+    lcdTextBgColor = "text-[#d97706]/15";
+    displayFrame = "bg-[linear-gradient(160deg,#333333_0%,#222222_25%,#111111_50%,#222222_75%,#333333_100%)] border-[#444444] border-t-[#555555] border-b-[#222222] shadow-[0_12px_32px_rgba(0,0,0,0.8)]";
+  } else if (theme === "Motif Teraso Terang") {
+    lcdBg = "bg-[#ccfbf1]";
+    lcdShadow = "shadow-[inset_0_6px_22px_rgba(20,120,120,0.4),inset_0_0_12px_rgba(0,0,0,0.15)]";
+    lcdTextColor = "text-[#0f766e]";
+    lcdTextShadow = "0 0 6px rgba(45, 212, 191, 0.95), 0 0 12px rgba(13, 148, 136, 0.8)";
+    lcdTextBgColor = "text-[#0d9488]/15";
+    displayFrame = "bg-[linear-gradient(160deg,#ffffff_0%,#f1f5f9_50%,#e2e8f0_100%)] border-[#cbd5e1] border-t-[#ffffff] border-b-[#94a3b8] shadow-[0_12px_32px_rgba(0,0,0,0.15)]";
+  } else if (theme === "Motif Galaxy Cosmic") {
+    lcdBg = "bg-[#06b6d4]";
+    lcdShadow = "shadow-[inset_0_6px_22px_rgba(0,100,150,0.95),inset_0_0_12px_rgba(0,0,0,0.4)]";
+    lcdTextColor = "text-[#083344]";
+    lcdTextShadow = "0 0 6px rgba(6, 182, 212, 0.95), 0 0 12px rgba(8, 145, 178, 0.8)";
+    lcdTextBgColor = "text-[#0891b2]/15";
+    displayFrame = "bg-[linear-gradient(160deg,#2e1065_0%,#090514_50%,#020617_100%)] border-[#6366f1] border-t-[#818cf8] border-b-[#4f46e5] shadow-[0_12px_32px_rgba(99,102,241,0.25)]";
   }
 
   return (
-    <div className="w-full bg-[linear-gradient(160deg,#f8fafc_0%,#cbd5e1_25%,#94a3b8_50%,#cbd5e1_75%,#f1f5f9_100%)] p-3 rounded-[2rem] shadow-[0_12px_32px_rgba(0,0,0,0.6),inset_0_2px_4px_rgba(255,255,255,0.9),inset_0_-3px_5px_rgba(0,0,0,0.3)] border-[2px] border-[#64748b] border-t-[#ffffff] border-b-[#475569] mb-5 shrink-0 select-none relative overflow-hidden">
+    <div className={cn("w-full p-3 rounded-[2rem] shadow-[0_12px_32px_rgba(0,0,0,0.6),inset_0_2px_4px_rgba(255,255,255,0.9),inset_0_-3px_5px_rgba(0,0,0,0.3)] border-[2px] mb-5 shrink-0 select-none relative overflow-hidden", displayFrame)}>
       {/* Glossy specular highlight reflection for the metal frame */}
       <div className="absolute inset-0 bg-gradient-to-br from-white/60 via-transparent to-transparent pointer-events-none rounded-[2rem]"></div>
       <div className={cn("h-[120px] rounded-[1.2rem] p-3 border-[3px] border-[#161616] flex flex-col justify-between relative overflow-hidden shrink-0", lcdBg, lcdShadow)}>
@@ -98,9 +132,6 @@ export function RadioDisplay({
           <>
             <div
               className="flex justify-between items-start mt-1 px-1 z-10"
-              style={{
-                filter: "drop-shadow(1px 1px 0px rgba(255,255,255,0.2))",
-              }}
             >
               {/* User Callsign Indicator */}
               <div
@@ -114,7 +145,7 @@ export function RadioDisplay({
                 }
               >
                 <User3D color1="#38bdf8" color2="#0284c7" size={25} />
-                <span className="font-sans text-[22px] font-bold text-[#1a0c02] tracking-tight truncate max-w-[150px] drop-shadow-[0_1px_0px_rgba(255,255,255,0.35)]">
+                <span className={cn("font-sans text-[18px] font-bold tracking-tight truncate max-w-[150px] drop-shadow-[0_1px_0px_rgba(255,255,255,0.35)]", lcdTextColor)}>
                   {currentUser?.name || fallbackUsername}
                 </span>
               </div>
@@ -170,20 +201,17 @@ export function RadioDisplay({
             {/* LCD Bottom Channel and Active Users row */}
             <div
               className="flex items-end justify-between px-1 z-10"
-              style={{
-                filter: "drop-shadow(1px 1px 0px rgba(255,255,255,0.2))",
-              }}
             >
               <div
                 className="flex items-end gap-1.5 mt-2 cursor-pointer"
                 onClick={() => setShowChannelInfo(true)}
               >
-                <span className="font-bold text-[18px] mb-0.5 text-[#1a0c02] tracking-wide drop-shadow-[0_1px_0px_rgba(255,255,255,0.35)]">
+                <span className={cn("font-bold text-[18px] mb-0.5 tracking-wide drop-shadow-[0_1px_0px_rgba(255,255,255,0.35)]", lcdTextColor)}>
                   CH
                 </span>
                 <div className="relative leading-none h-[2.5rem] w-[4.25rem]">
                   <span
-                    className="text-[2.5rem] text-[#b43200]/15 absolute bottom-0 left-0 tracking-normal not-italic"
+                    className={cn("text-[2.5rem] absolute bottom-0 left-0 tracking-normal not-italic", lcdTextBgColor)}
                     style={{
                       fontFamily: "'DSEG7-Classic-MINI', monospace",
                       fontStyle: "normal",
@@ -198,8 +226,7 @@ export function RadioDisplay({
                       fontFamily: "'DSEG7-Classic-MINI', monospace",
                       fontStyle: "normal",
                       fontWeight: "bold",
-                      textShadow:
-                        "0 0 6px rgba(255, 140, 0, 0.95), 0 0 12px rgba(255, 69, 0, 0.8)",
+                      textShadow: lcdTextShadow,
                       filter: "drop-shadow(0 0 1px rgba(255, 255, 255, 0.45))",
                     }}
                   >
@@ -213,7 +240,7 @@ export function RadioDisplay({
                 <button
                   id="user-list-btn"
                   onClick={() => setUserListOpen(true)}
-                  className="flex items-center gap-1.5 mb-1.5 hover:bg-black/10 px-1 py-0.5 rounded-lg cursor-pointer transition-colors shrink-0"
+                  className="flex items-end gap-1.5 pb-0.5 hover:bg-black/10 px-1 rounded-lg cursor-pointer transition-colors shrink-0"
                 >
                   <div
                     className={cn(

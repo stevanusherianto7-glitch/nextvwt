@@ -11,6 +11,7 @@ import {
 import { Radio } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useShallow } from "zustand/react/shallow";
+import { cn } from "./lib/utils";
 
 import { useAppStore } from "./store/useAppStore";
 import {
@@ -49,6 +50,42 @@ const DEFAULT_CHANNELS = [
   { id: "18", name: "THE WINNER" },
   { id: "90", name: "FAMILY NUSANTARA" },
 ];
+
+const getCasingClass = (theme: string) => {
+  switch (theme) {
+    case "Taktis (Hijau)":
+      return "casing-taktis";
+    case "Siber (Biru)":
+      return "casing-siber";
+    case "Monokrom (Putih)":
+      return "casing-monokrom";
+    case "Motif Serat Karbon":
+      return "casing-carbon";
+    case "Motif Teraso Terang":
+      return "casing-terrazzo";
+    case "Motif Galaxy Cosmic":
+      return "casing-cosmic";
+    default:
+      return "casing-klasik";
+  }
+};
+
+const getInnerContainerClass = (theme: string) => {
+  switch (theme) {
+    case "Taktis (Hijau)":
+      return "bg-gradient-to-b from-[#2e3f33]/90 via-[#1f2b23]/95 to-[#121915]/98 border-[#3b4f41]/40 text-[#dcfce7]/90 shadow-[0_15px_25px_rgba(0,0,0,0.45),inset_0_4px_8px_rgba(255,255,255,0.1)]";
+    case "Siber (Biru)":
+      return "bg-gradient-to-b from-[#0f172a]/90 via-[#020617]/95 to-black/98 border-[#1e293b]/40 text-[#f0f9ff]/90 shadow-[0_15px_25px_rgba(0,0,0,0.45),inset_0_4px_8px_rgba(255,255,255,0.1)]";
+    case "Motif Serat Karbon":
+      return "bg-gradient-to-b from-[#1c1c1c]/90 via-[#121212]/95 to-black/98 border-[#2d2d2d]/50 text-white shadow-[0_15px_25px_rgba(0,0,0,0.6),inset_0_4px_8px_rgba(255,255,255,0.05)]";
+    case "Motif Teraso Terang":
+      return "bg-gradient-to-b from-[#faf9f5]/80 via-[#f1f5f9]/85 to-[#e2e8f0]/90 border-[#cbd5e1]/40 text-gray-900 shadow-[0_15px_25px_rgba(0,0,0,0.15),inset_0_4px_8px_rgba(255,255,255,0.8)]";
+    case "Motif Galaxy Cosmic":
+      return "bg-gradient-to-b from-[#170e30]/85 via-[#080415]/95 to-black/98 border-[#6366f1]/30 text-white shadow-[0_15px_25px_rgba(0,0,0,0.5),inset_0_4px_8px_rgba(99,102,241,0.1)]";
+    default: // Klasik (Oranye), Monokrom (Putih)
+      return "bg-gradient-to-b from-[#ffffff] from-20% via-[#f1f5f9] via-70% to-[#cbd5e1] border-[#e5e7eb] text-gray-900 shadow-[0_15px_25px_rgba(0,0,0,0.25),0_5px_10px_rgba(0,0,0,0.1),inset_0_4px_8px_rgba(255,255,255,1),inset_0_-4px_10px_rgba(0,0,0,0.1)]";
+  }
+};
 
 export default function App() {
   const [session, setSession] = useState<any>(null);
@@ -545,7 +582,7 @@ export default function App() {
   // ── Main App ────────────────────────────────────────────────────────
   return (
     <div className="h-[100dvh] w-full flex items-center justify-center font-sans overflow-hidden bg-black">
-      <div className="w-full sm:max-w-[420px] bg-gradient-to-b from-[#ffffff] from-10% via-[#e2e8f0] via-60% to-[#94a3b8] overflow-hidden relative flex flex-col h-full shrink-0">
+      <div className={cn("w-full sm:max-w-[420px] overflow-hidden relative flex flex-col h-full shrink-0", getCasingClass(settings.theme))}>
         {/* Top App Bar */}
         <TopHeader
           isLocalSpeaking={isLocalSpeaking}
@@ -559,7 +596,7 @@ export default function App() {
 
         <div className="p-3 flex flex-col items-center flex-1 min-h-0">
           {!isUserListOpen && (
-            <div className="w-full bg-gradient-to-b from-[#ffffff] from-20% via-[#f1f5f9] via-70% to-[#cbd5e1] rounded-t-[2.5rem] rounded-b-[5rem] p-4 pb-4 shadow-[0_15px_25px_rgba(0,0,0,0.25),0_5px_10px_rgba(0,0,0,0.1),inset_0_4px_8px_rgba(255,255,255,1),inset_0_-4px_10px_rgba(0,0,0,0.1)] border-[1px] border-[#e5e7eb] mb-2 flex flex-col shrink-0">
+            <div className={cn("w-full rounded-t-[2.5rem] rounded-b-[5rem] p-4 pb-4 border-[1px] mb-2 flex flex-col shrink-0 transition-all duration-300", getInnerContainerClass(settings.theme))}>
               <RadioDisplay
                 bootStatus={bootStatus}
                 currentUser={currentUser}
