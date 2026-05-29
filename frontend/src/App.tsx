@@ -177,8 +177,8 @@ export default function App() {
     supabase.auth
       .getSession()
       .then(({ data: { session } }) => {
-        setSession(session);
         if (session) {
+          setSession(session);
           SupabaseSyncService.getInstance().loadProfileFromSupabase(
             session.user.id,
           );
@@ -202,12 +202,18 @@ export default function App() {
 
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-      if (session) {
+    } = supabase.auth.onAuthStateChange((_event, newSession) => {
+      if (newSession) {
+        setSession(newSession);
         SupabaseSyncService.getInstance().loadProfileFromSupabase(
-          session.user.id,
+          newSession.user.id,
         );
+      } else {
+        // Prevent Supabase from clearing our offline mock session
+        setSession((prev) => {
+          if (prev && prev.access_token === "mock") return prev;
+          return null;
+        });
       }
     });
 
@@ -515,6 +521,7 @@ export default function App() {
     return (
       <AuthForm
         onLoginSuccess={(username) => {
+          if (username) setName(username);
           // Fallback if somehow login succeeds but session is still null (Offline Mock Bypass)
           if (!session) {
             setSession({
