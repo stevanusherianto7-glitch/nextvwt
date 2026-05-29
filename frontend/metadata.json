@@ -1,0 +1,6 @@
+{
+  "name": "NextVWT",
+  "description": "A modern web-based Push-To-Talk (PTT) clone of IndoVWT featuring WebRTC audio pipeline, smart connection management, and an advanced UI/UX.",
+  "requestFramePermissions": ["microphone"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

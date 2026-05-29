@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>NextVWT</title>
+    <style>
+      #boot-fallback {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #e5edf5;
+        color: #0f172a;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        text-align: center;
+        padding: 24px;
+      }
+      #boot-fallback .box {
+        max-width: 520px;
+        border-radius: 24px;
+        background: rgba(255,255,255,.92);
+        box-shadow: 0 18px 55px rgba(15,23,42,.18);
+        padding: 24px;
+      }
+      #boot-fallback .title { font-weight: 800; font-size: 24px; margin-bottom: 8px; }
+      #boot-fallback .muted { color: #64748b; line-height: 1.5; }
+      #boot-fallback code { background: #e2e8f0; border-radius: 6px; padding: 2px 6px; }
+    </style>
+    <script type="module" crossorigin src="./assets/index-CRnfA-CQ.js"></script>
+    <link rel="modulepreload" crossorigin href="./assets/icons-CZhWlko1.js">
+    <link rel="modulepreload" crossorigin href="./assets/motion-DE6ujx7c.js">
+    <link rel="modulepreload" crossorigin href="./assets/react-QoMn22hK.js">
+    <link rel="modulepreload" crossorigin href="./assets/realtime-BIIei4U1.js">
+    <link rel="stylesheet" crossorigin href="./assets/index-DhvGJfvo.css">
+  </head>
+  <body>
+    <div id="root">
+      <div id="boot-fallback">
+        <div class="box">
+          <div class="title">NextVWT sedang dimuat…</div>
+          <div class="muted">Jika layar tetap putih lebih dari 10 detik, buka DevTools Console atau jalankan <code>RUN_DEV_CHROME_CLEAN_PNPM.ps1</code> untuk membuka Chrome dengan cache bersih.</div>
+        </div>
+      </div>
+    </div>
+    <script>
+      window.__NEXTVWT_BOOT_ERRORS__ = [];
+      window.addEventListener('error', function (event) {
+        window.__NEXTVWT_BOOT_ERRORS__.push(event.message || String(event.error || 'Unknown error'));
+        var root = document.getElementById('root');
+        if (root && root.querySelector('#boot-fallback')) {
+          root.innerHTML = '<div id="boot-fallback"><div class="box"><div class="title">⚠️ NextVWT gagal dimuat</div><div class="muted">' +
+            'Error: ' + String(event.message || event.error || 'Unknown error').replace(/[<>&]/g, function(c){return ({'<':'&lt;','>':'&gt;','&':'&amp;'})[c]}) +
+            '<br/><br/>Tekan <b>Ctrl+F5</b>. Jika masih gagal, kirim isi Console Chrome.</div></div></div>';
+        }
+      });
+      window.addEventListener('unhandledrejection', function (event) {
+        window.__NEXTVWT_BOOT_ERRORS__.push(String(event.reason || 'Unhandled rejection'));
+      });
+
+      // --- ANTI-INSPECT PROTECTION ---
+      // Blokir klik kanan DIBATALKAN atas permintaan user
+      // document.addEventListener('contextmenu', function(e) { e.preventDefault(); });
+      document.addEventListener('dragstart', function(e) { e.preventDefault(); });
+      document.addEventListener('keydown', function(e) {
+        // F12
+        if (e.keyCode === 123) { e.preventDefault(); return false; }
+        // Ctrl+Shift+I (Windows) atau Cmd+Opt+I (Mac)
+        if (e.ctrlKey && e.shiftKey && e.keyCode === 73) { e.preventDefault(); return false; }
+        // Ctrl+Shift+J (Windows) atau Cmd+Opt+J (Mac)
+        if (e.ctrlKey && e.shiftKey && e.keyCode === 74) { e.preventDefault(); return false; }
+        // Ctrl+U (View Source)
+        if (e.ctrlKey && e.keyCode === 85) { e.preventDefault(); return false; }
+      });
+    </script>
+  </body>
+</html>

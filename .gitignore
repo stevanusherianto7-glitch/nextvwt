@@ -1,0 +1,18 @@
+# Gradle
+.gradle/
+build/
+app/build/
+local.properties
+
+# IDE
+.idea/
+*.iml
+
+# Node
+node_modules/
+dist/
+*.log
+
+# Supabase
+.env
+.env.local

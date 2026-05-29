@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">NexVWT</string>
+    <string name="server_url_hint">http://192.168.1.25:3000</string>
+    <string name="set_server_title">Set Server URL</string>
+    <string name="save">Save</string>
+    <string name="cancel">Cancel</string>
+    <string name="error_server_unavailable">Server NexVWT belum aktif atau alamat IP salah.</string>
+    <string name="reload">Reload</string>
+    <string name="set_server">Set Server</string>
+</resources>

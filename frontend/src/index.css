@@ -1,0 +1,165 @@
+@import "tailwindcss";
+
+@keyframes scroll-text {
+  0% { transform: translateX(300px); }
+  100% { transform: translateX(-100%); }
+}
+
+.animate-scroll {
+  display: inline-block;
+  white-space: nowrap;
+  animation: scroll-text 8s linear infinite;
+}
+
+
+@font-face {
+  font-family: 'DSEG7-Classic-MINI';
+  src: url('https://cdn.jsdelivr.net/npm/dseg@0.46.0/fonts/DSEG7-Classic-MINI/DSEG7ClassicMini-Bold.woff2') format('woff2'),
+       url('https://cdn.jsdelivr.net/npm/dseg@0.46.0/fonts/DSEG7-Classic-MINI/DSEG7ClassicMini-Bold.woff') format('woff');
+  font-weight: bold;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'DSEG14-Classic-MINI';
+  src: url('https://cdn.jsdelivr.net/npm/dseg@0.46.0/fonts/DSEG14-Classic-MINI/DSEG14ClassicMini-Bold.woff2') format('woff2'),
+       url('https://cdn.jsdelivr.net/npm/dseg@0.46.0/fonts/DSEG14-Classic-MINI/DSEG14ClassicMini-Bold.woff') format('woff');
+  font-weight: bold;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'DSEG7-Classic-Mini';
+  src: url('https://cdn.jsdelivr.net/npm/dseg@0.46.0/fonts/DSEG7-Classic-MINI/DSEG7ClassicMini-Bold.woff2') format('woff2'),
+       url('https://cdn.jsdelivr.net/npm/dseg@0.46.0/fonts/DSEG7-Classic-MINI/DSEG7ClassicMini-Bold.woff') format('woff');
+  font-weight: bold;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* From Uiverse.io by csemszepp */
+.power-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  --hue: 220deg;
+  --width: 5.5rem;
+  --accent-hue: 22deg;
+  --duration: 0.3s;
+  --easing: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.togglesw {
+  display: none;
+}
+
+.power-switch {
+  --shadow-offset: calc(var(--width) / 20);
+  position: relative;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  width: var(--width);
+  height: calc(var(--width) / 2.5);
+  border-radius: var(--width);
+  background: linear-gradient(180deg, #a3a3a3 0%, #d4d4d4 40%, #ffffff 100%);
+  box-shadow: 
+    inset 0 6px 12px rgba(0,0,0,0.6),
+    inset 0 2px 6px rgba(0,0,0,0.4),
+    0 2px 4px rgba(255,255,255,1),
+    0 -1px 2px rgba(0,0,0,0.1);
+  border: 1px solid #737373;
+}
+
+.power-indicator {
+  content: '';
+  position: absolute;
+  width: 45%;
+  height: 65%;
+  transition: all var(--duration) var(--easing);
+  box-shadow: inset 0 0 2px hsl(var(--hue) 20% 15% / 60%),
+    inset 0 0 3px 2px hsl(var(--hue) 20% 15% / 60%),
+    inset 0 0 5px 2px hsl(var(--hue) 20% 45% / 60%);
+}
+
+.power-indicator.left {
+  --hue: var(--accent-hue);
+  overflow: hidden;
+  left: 6%;
+  border-radius: 100px 0 0 100px;
+  background: linear-gradient(180deg, #ea580c 0%, #f97316 40%, #c2410c 100%);
+  box-shadow: 
+    inset 0 4px 8px rgba(0,0,0,0.5),
+    inset 0 1px 3px rgba(0,0,0,0.3);
+}
+
+.power-indicator.left::after {
+  content: '';
+  position: absolute;
+  opacity: 0.6;
+  width: 100%;
+  height: 100%;
+}
+
+.power-indicator.right {
+  right: 6%;
+  border-radius: 0 100px 100px 0;
+  background: linear-gradient(180deg, #737373 0%, #a3a3a3 40%, #525252 100%);
+  box-shadow: 
+    inset 0 4px 8px rgba(0,0,0,0.5),
+    inset 0 1px 3px rgba(0,0,0,0.3);
+}
+
+.power-button {
+  position: absolute;
+  z-index: 1;
+  width: 50%;
+  height: 90%;
+  left: 3%;
+  border-radius: 100px;
+  background: linear-gradient(180deg, #ffffff 10%, #e2e8f0 60%, #94a3b8 100%);
+  transition: all var(--duration) var(--easing);
+  box-shadow: 
+    0 8px 12px rgba(0,0,0,0.5),
+    0 4px 6px rgba(0,0,0,0.3),
+    inset 0 6px 8px rgba(255,255,255,1),
+    inset 0 -3px 6px rgba(0,0,0,0.3);
+  border-top: 2px solid #ffffff;
+  border-bottom: 2px solid #64748b;
+}
+
+.power-button::before, 
+.power-button::after {
+  content: '';
+  position: absolute;
+  top: 15%;
+  width: 35%;
+  height: 70%;
+  border-radius: 100%;
+}
+
+.power-button::before {
+  left: 8%;
+  box-shadow: inset 1px 2px 4px rgba(0,0,0,0.3), 0 1px 1px rgba(255,255,255,1);
+  background: linear-gradient(180deg, #cbd5e1 0%, #ffffff 100%);
+}
+
+.power-button::after {
+  right: 8%;
+  box-shadow: inset 1px 2px 4px rgba(0,0,0,0.3), 0 1px 1px rgba(255,255,255,1);
+  background: linear-gradient(180deg, #cbd5e1 0%, #ffffff 100%);
+}
+
+.togglesw:checked ~ .power-button {
+  left: 47%;
+}
+
+.togglesw:not(:checked) ~ .power-indicator.left,
+.togglesw:checked ~ .power-indicator.right {
+  box-shadow: 
+    inset 0 6px 15px rgba(0,0,0,0.8),
+    inset 0 2px 5px rgba(0,0,0,0.6);
+  opacity: 0.5;
+}
