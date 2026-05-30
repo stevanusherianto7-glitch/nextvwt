@@ -103,7 +103,7 @@ export function UserListModal({
       animate={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0, scale: 0.98 }}
       transition={{ duration: 0.15 }}
-      className="flex-1 w-full z-50 bg-gradient-to-b from-[#ffffff] to-[#f8fafc] shadow-[inset_0_2px_8px_rgba(0,0,0,0.12)] flex flex-col overflow-hidden select-none min-h-0"
+      className="flex-1 w-full mb-2 rounded-t-[2.5rem] rounded-b-[4rem] z-50 bg-gradient-to-b from-[#ffffff] to-[#f8fafc] shadow-[0_15px_35px_rgba(0,0,0,0.4),inset_0_-6px_15px_rgba(0,0,0,0.08),inset_0_2px_4px_rgba(255,255,255,0.9)] border border-slate-300/80 flex flex-col overflow-hidden select-none min-h-0"
     >
       <button
         id="close-user-list-btn"
@@ -112,11 +112,19 @@ export function UserListModal({
         aria-hidden="true"
       />
 
-      <div className="flex items-center justify-between px-4 py-3 border-b border-slate-200/60 bg-white/80 backdrop-blur-md sticky top-0 z-10 shrink-0 shadow-sm">
-        <h3 className="font-bold text-slate-700 text-[15px]">Daftar Pengguna ({channelUsers.length})</h3>
-        <button onClick={onClose} className="w-8 h-8 flex items-center justify-center rounded-full bg-slate-200 text-slate-600 font-bold hover:bg-slate-300 transition-colors shadow-[inset_0_1px_2px_rgba(255,255,255,0.5),0_1px_2px_rgba(0,0,0,0.1)]">
-          ✕
-        </button>
+      <div 
+        onClick={onClose}
+        className="px-4 py-3 border-b border-slate-200/60 bg-white/90 backdrop-blur-md sticky top-0 z-10 shrink-0 shadow-[0_2px_10px_rgba(0,0,0,0.05)] cursor-pointer hover:bg-slate-50 transition-colors"
+      >
+        {modulatingUsers.length > 0 ? (
+          renderUserCard(modulatingUsers[0], "modulating")
+        ) : (
+          <div className="flex items-center justify-center py-4">
+            <span className="font-bold text-slate-400 text-[13px] uppercase tracking-widest">
+              STANDBY
+            </span>
+          </div>
+        )}
       </div>
 
       <div 
@@ -139,19 +147,11 @@ export function UserListModal({
             ))}
           </section>
         ) : (
-          <>
-            {modulatingUsers.length > 0 && (
-              <section data-testid="modulating-users" className="space-y-2">
-                {modulatingUsers.map((user) =>
-                  renderUserCard(user, "modulating"),
-                )}
-              </section>
-            )}
-
-            <section data-testid="joined-users" className="space-y-2">
-              {channelUsers.map((user) => renderUserCard(user, "joined"))}
-            </section>
-          </>
+          <section data-testid="joined-users" className="space-y-2">
+            {channelUsers
+              .filter((user) => !user.isSpeaking)
+              .map((user) => renderUserCard(user, "joined"))}
+          </section>
         )}
       </div>
     </motion.div>

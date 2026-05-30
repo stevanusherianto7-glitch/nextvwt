@@ -85,7 +85,10 @@ export class ConnectionManager {
 
     this.socket = io(resolvedUrl, {
       path: "/socket.io",
-      transports: ["websocket", "polling"],
+      transports: ["polling", "websocket"],
+      extraHeaders: {
+        "Bypass-Tunnel-Reminder": "true"
+      },
       reconnection: true,
       reconnectionAttempts: Infinity,
       reconnectionDelay: 1000,

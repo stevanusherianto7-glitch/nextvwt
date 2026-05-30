@@ -36,20 +36,37 @@ export function RadioControls({
         </div>
       </div>
 
+      {/* 
+        ====================================================================
+        ⚠️ DILARANG KERAS MENGUBAH / MENGEDIT KODE DI AREA BAWAH INI! ⚠️
+        Desain D-Pad (Bezel Putih & Lorong Hitam) sudah di-kalibrasi PIXEL-PERFECT.
+        Setiap perubahan pada margin, padding, border, atau bayangan (drop-shadow) 
+        akan merusak efek 3D fisik dan tata letak bezel putih di antara tombol.
+        ==================================================================== 
+      */}
       {/* D-Pad Bezel and Button Panel */}
       <div className="relative w-full h-[180px] mt-2 shrink-0 flex justify-center items-center">
         {/* Shadow backgrounds for physical look */}
-        <div className="absolute inset-0 flex justify-center items-center drop-shadow-[0_12px_20px_rgba(0,0,0,0.35)] drop-shadow-[0_4px_6px_rgba(0,0,0,0.2)] select-none pointer-events-none">
-          <div className="absolute left-[8px] right-[8px] top-[40px] h-[100px] rounded-[50px] bg-gradient-to-b from-[#f8fafc] via-[#e2e8f0] to-[#cbd5e1] shadow-[inset_0_4px_8px_rgba(255,255,255,1),inset_0_-3px_6px_rgba(0,0,0,0.15),0_2px_4px_rgba(255,255,255,0.5)] border border-black/5"></div>
-          <div className="absolute top-[8px] bottom-[8px] left-[calc(50%-50px)] w-[100px] rounded-[50px] bg-gradient-to-b from-[#f8fafc] via-[#e2e8f0] to-[#cbd5e1] shadow-[inset_0_4px_8px_rgba(255,255,255,1),inset_0_-3px_6px_rgba(0,0,0,0.15),0_2px_4px_rgba(255,255,255,0.5)] border border-black/5"></div>
-          <div className="absolute top-[42px] left-[calc(50%-48px)] w-[96px] h-[96px] bg-[#e6ecef]"></div>
+        <div className="absolute inset-0 drop-shadow-[0_15px_20px_rgba(0,0,0,0.45)] select-none pointer-events-none">
+          {/* Main cross arms - BEZEL */}
+          <div className="absolute left-[8px] right-[8px] top-[40px] h-[100px] rounded-[50px] bg-gradient-to-b from-[#ffffff] via-[#e2e8f0] to-[#94a3b8] shadow-[inset_0_4px_10px_rgba(255,255,255,1),inset_0_-4px_8px_rgba(0,0,0,0.2)] border border-black/20"></div>
+          
+          <div className="absolute top-[8px] bottom-[8px] left-[calc(50%-50px)] w-[100px] rounded-[50px] bg-gradient-to-b from-[#ffffff] via-[#e2e8f0] to-[#94a3b8] shadow-[inset_0_4px_10px_rgba(255,255,255,1),inset_0_-4px_8px_rgba(0,0,0,0.2)] border border-black/20"></div>
+          
+          {/* Perfect center cover to hide overlapping internal borders */}
+          <div className="absolute top-[41px] left-[calc(50%-49px)] w-[98px] h-[98px] bg-gradient-to-b from-[#f1f5f9] to-[#cbd5e1] shadow-[0_0_8px_4px_rgba(226,232,240,1)]"></div>
         </div>
 
         {/* Matte black grooves */}
-        <div className="absolute inset-0 flex justify-center items-center z-[2] select-none pointer-events-none">
-          <div className="absolute left-[18px] top-[50px] h-[80px] w-[calc(50%-68px)] bg-gradient-to-b from-[#0a0a0a] to-[#262626] rounded-l-[40px] shadow-[inset_0_8px_16px_rgba(0,0,0,1),inset_0_2px_4px_rgba(0,0,0,0.8)] border-t-[1.5px] border-[#000] border-b border-[#444] border-l-[1.5px]"></div>
-          <div className="absolute right-[18px] top-[50px] h-[80px] w-[calc(50%-68px)] bg-gradient-to-b from-[#0a0a0a] to-[#262626] rounded-r-[40px] shadow-[inset_0_8px_16px_rgba(0,0,0,1),inset_0_2px_4px_rgba(0,0,0,0.8)] border-t-[1.5px] border-[#000] border-b border-[#444] border-r-[1.5px]"></div>
-          <div className="absolute top-[18px] bottom-[18px] left-[calc(50%-40px)] w-[80px] bg-gradient-to-b from-[#050505] to-[#222222] rounded-[40px] shadow-[inset_0_10px_20px_rgba(0,0,0,1),inset_0_2px_6px_rgba(0,0,0,0.9)] border-t-[1.5px] border-[#000] border-b border-[#333]"></div>
+        <div className="absolute inset-0 z-[2] drop-shadow-[0_1px_1px_rgba(255,255,255,0.5)] select-none pointer-events-none">
+          {/* Left Black Groove (Scan) */}
+          <div className="absolute left-[18px] right-[calc(50%+48px)] top-[50px] h-[80px] rounded-l-[40px] rounded-r-[12px] bg-gradient-to-b from-[#111] to-[#222] shadow-[inset_0_10px_20px_rgba(0,0,0,1)] border border-[#000]"></div>
+          
+          {/* Right Black Groove (Set) */}
+          <div className="absolute left-[calc(50%+48px)] right-[18px] top-[50px] h-[80px] rounded-r-[40px] rounded-l-[12px] bg-gradient-to-b from-[#111] to-[#222] shadow-[inset_0_10px_20px_rgba(0,0,0,1)] border border-[#000]"></div>
+          
+          {/* Vertical Black Groove (Up/Down) */}
+          <div className="absolute top-[18px] bottom-[18px] left-[calc(50%-40px)] w-[80px] rounded-[40px] bg-gradient-to-b from-[#111] to-[#222] shadow-[inset_0_10px_20px_rgba(0,0,0,1)] border border-[#000]"></div>
         </div>
 
         {/* Real Interactive Control Buttons */}

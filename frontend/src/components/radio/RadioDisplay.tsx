@@ -101,6 +101,12 @@ export function RadioDisplay({
     lcdTextBgColor = "text-[#0891b2]/15";
     displayFrame = "bg-[linear-gradient(160deg,#2e1065_0%,#090514_50%,#020617_100%)] border-[#6366f1] border-t-[#818cf8] border-b-[#4f46e5] shadow-[0_12px_32px_rgba(99,102,241,0.25)]";
   }
+  const speakingUsers = usersArray.filter((u) => u.isSpeaking);
+  const activeSpeakerName = isLocalSpeaking
+    ? currentUser?.name || fallbackUsername
+    : speakingUsers.length > 0
+      ? speakingUsers[0].name
+      : null;
 
   return (
     <div className={cn("w-full p-3 rounded-[2rem] shadow-[0_12px_32px_rgba(0,0,0,0.6),inset_0_2px_4px_rgba(255,255,255,0.9),inset_0_-3px_5px_rgba(0,0,0,0.3)] border-[2px] mb-5 shrink-0 select-none relative overflow-hidden", displayFrame)}>
@@ -263,17 +269,15 @@ export function RadioDisplay({
             </div>
 
             {/* Speaking Status Badges */}
-            {isTransmitting && (
-              <div className="absolute top-1 left-1/2 -translate-x-1/2 flex items-center justify-center gap-2 bg-[#ff8c00]/95 backdrop-blur-sm border border-black/40 px-3 py-1 shadow-lg pointer-events-none rounded-full z-20 transition-all duration-300 scale-90 origin-top">
-                <Activity
-                  className={cn(
-                    "w-3 h-3 text-black",
-                    isLocalSpeaking ? "animate-bounce" : "animate-pulse",
-                  )}
-                />
-                <span className="text-[10px] font-bold text-black uppercase tracking-widest leading-none">
-                  MODULASI
+            {(isTransmitting || speakingUsers.length > 0) && (
+              <div className="absolute top-2 left-1/2 -translate-x-1/2 flex items-center justify-center gap-2 bg-black/85 backdrop-blur-sm px-3 py-1.5 shadow-[0_4px_10px_rgba(0,0,0,0.5)] pointer-events-none rounded-full z-20 transition-all duration-300">
+                <div className="w-5 h-5 rounded-full overflow-hidden flex items-center justify-center bg-[#222]">
+                  <User3D color1="#38bdf8" color2="#0284c7" size={18} />
+                </div>
+                <span className="text-[12px] font-bold text-white tracking-wide leading-none truncate max-w-[120px]">
+                  {activeSpeakerName}
                 </span>
+                <Activity className="w-3.5 h-3.5 text-green-400 animate-pulse" />
               </div>
             )}
 
