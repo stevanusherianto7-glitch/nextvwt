@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Radio, User as UserIcon, Crown, Star, VolumeX, Clock, PhoneOff } from "lucide-react";
+import { Radio, User as UserIcon, Crown, Star, VolumeX, Clock, PhoneOff, ShieldCheck, Settings } from "lucide-react";
 import { type RealtimeUser } from "../store/useRealtimeStore";
 import { useAppStore } from "../store/useAppStore";
 import { cn } from "../lib/utils";
@@ -32,8 +32,20 @@ export function UserListModal({
 
   const [activeMenuUserId, setActiveMenuUserId] = useState<string | null>(null);
   const currentUserRole = users.find((u) => u.id === currentUserId)?.role;
-  const isAdmin = currentUserRole === "admin";
+  const isNoc = currentUserRole === "noc";
+  const isSysAdmin = currentUserRole === "sysadmin";
+  const isLurah = currentUserRole === "lurah";
+  const canModerate = isNoc || isSysAdmin || isLurah;
   const socket = useAppStore((s) => s.socket);
+
+  const getRoleWeight = (r: string | undefined) => {
+    if (r === "noc") return 5;
+    if (r === "sysadmin") return 4;
+    if (r === "lurah") return 3;
+    if (r === "motorist_tetap") return 2;
+    if (r === "motorist_kehormatan") return 1;
+    return 0;
+  };
 
   const handleModerate = (targetName: string, action: string, durationMin?: number) => {
     if (socket) socket.emit("moderate-user", { targetName, action, durationMin });
@@ -48,7 +60,8 @@ export function UserListModal({
       <div
         onClick={(e) => {
           e.stopPropagation();
-          if (isAdmin && user.id !== currentUserId) {
+          const targetRole = user.role;
+          if (canModerate && user.id !== currentUserId && getRoleWeight(currentUserRole) > getRoleWeight(targetRole)) {
             setActiveMenuUserId((prev) => (prev === user.id ? null : user.id));
           }
         }}
@@ -62,6 +75,7 @@ export function UserListModal({
           : "bg-gradient-to-b from-white to-[#f1f5f9] border-slate-200/85",
       )}
     >
+      <div className="relative">
       <div
         className={cn(
           "w-11 h-11 shrink-0 bg-gradient-to-b from-[#e2e8f0] to-[#f1f5f9] rounded-xl flex items-center justify-center relative overflow-hidden border shadow-[inset_0_1.5px_3px_rgba(0,0,0,0.08)] transition-all",
@@ -89,15 +103,46 @@ export function UserListModal({
         )}
       </div>
 
+      {/* Role Star Badges */}
+      {user.role !== "visitor" && (
+        <div className="absolute -bottom-1.5 -right-1.5 z-10 pointer-events-none">
+          {user.role === "motorist_kehormatan" && (
+            <Star className="w-4 h-4 text-slate-300 stroke-[2.5px] fill-transparent drop-shadow-[0_1.5px_1.5px_rgba(0,0,0,0.6)]" />
+          )}
+          {user.role === "motorist_tetap" && (
+            <Star className="w-4 h-4 text-emerald-500 fill-emerald-500 stroke-[1px] stroke-black/20 drop-shadow-[0_1.5px_1.5px_rgba(0,0,0,0.6)]" />
+          )}
+          {(user.role === "lurah" || user.role === "sysadmin" || user.role === "noc") && (
+            <div className="flex items-center">
+              {Array.from({ length: user.role === "noc" ? 4 : user.role === "sysadmin" ? 3 : 2 }).map((_, i) => (
+                <Star
+                  key={i}
+                  className={cn(
+                    "w-[14px] h-[14px] stroke-[1px] stroke-black/20 drop-shadow-[0_1px_1.5px_rgba(0,0,0,0.7)]",
+                    i % 2 === 0 ? "text-amber-500 fill-amber-400" : "text-slate-100 fill-slate-50",
+                    i > 0 && "-ml-1.5 mt-1.5"
+                  )}
+                  style={{ zIndex: 10 - i }}
+                />
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+      </div>
+
       <div className="flex-1 min-w-0 flex flex-col justify-center">
-        <div className="font-bold text-slate-800 text-[15.5px] leading-tight truncate flex items-center gap-1.5">
-          {user.role === "admin" && <Crown className="w-4 h-4 text-amber-500 fill-amber-500 shrink-0" />}
-          {user.role === "regular" && <Star className="w-4 h-4 text-slate-300 fill-white drop-shadow-md stroke-slate-400 shrink-0" />}
+        <div className="font-medium text-slate-800 text-[15.5px] leading-tight truncate flex items-center gap-1.5">
           <span className="truncate">{user.name} {user.id === currentUserId && " (You)"}</span>
         </div>
         <div className="text-[12px] text-slate-400 truncate mt-1 flex items-center gap-1.5">
           <span className="text-[10px] font-black font-mono px-1.5 py-0.5 rounded bg-blue-50 border border-blue-200 text-blue-600 shadow-sm leading-none flex items-center justify-center">
-            {user.id.substring(0, 5).toUpperCase()}
+            {user.role === "noc" ? "N.O.C" : 
+             user.role === "sysadmin" ? "SYS" : 
+             user.role === "lurah" ? "LURAH" :
+             user.role === "motorist_tetap" ? "MT. TETAP" :
+             user.role === "motorist_kehormatan" ? "MT. KEHORMATAN" :
+             user.id.substring(0, 5).toUpperCase()}
           </span>
           <span className="text-slate-500 truncate">
             {user.locationState || "Unknown Region"}
@@ -121,11 +166,25 @@ export function UserListModal({
             exit={{ opacity: 0, height: 0 }}
             className="flex items-center gap-2 overflow-hidden justify-end pr-1"
           >
+            {isNoc && (
+              <button
+                onClick={() => handleModerate(user.name, user.role === "sysadmin" ? "demote-sysadmin" : "promote-sysadmin")}
+                className="px-2.5 py-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-600 rounded-lg shadow-[0_2px_4px_rgba(0,0,0,0.05)] border border-indigo-200/50 text-[11px] font-bold flex items-center gap-1.5 transition-colors"
+              >
+                <Settings className="w-3.5 h-3.5" /> {user.role === "sysadmin" ? "Cabut Sys Admin" : "Jadikan Sys Admin"}
+              </button>
+            )}
             <button
-              onClick={() => handleModerate(user.name, user.role === "regular" ? "demote-regular" : "promote-regular")}
-              className="px-2.5 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-600 rounded-lg shadow-[0_2px_4px_rgba(0,0,0,0.05)] border border-blue-200/50 text-[11px] font-bold flex items-center gap-1.5 transition-colors"
+              onClick={() => handleModerate(user.name, user.role === "motorist_tetap" ? "demote-motorist-tetap" : "promote-motorist-tetap")}
+              className="px-2.5 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-600 rounded-lg shadow-[0_2px_4px_rgba(0,0,0,0.05)] border border-blue-200/50 text-[11px] font-bold flex items-center gap-1.5 transition-colors whitespace-nowrap"
             >
-              <Star className="w-3.5 h-3.5" /> {user.role === "regular" ? "Cabut Warga" : "Warga Tetap"}
+              <Star className="w-3.5 h-3.5 fill-current" /> {user.role === "motorist_tetap" ? "Cabut MT. Tetap" : "Jadikan MT. Tetap"}
+            </button>
+            <button
+              onClick={() => handleModerate(user.name, user.role === "motorist_kehormatan" ? "demote-motorist-kehormatan" : "promote-motorist-kehormatan")}
+              className="px-2.5 py-1.5 bg-slate-50 hover:bg-slate-100 text-slate-600 rounded-lg shadow-[0_2px_4px_rgba(0,0,0,0.05)] border border-slate-200/50 text-[11px] font-bold flex items-center gap-1.5 transition-colors whitespace-nowrap"
+            >
+              <Star className="w-3.5 h-3.5" /> {user.role === "motorist_kehormatan" ? "Cabut MT. Hormat" : "Jadikan MT. Hormat"}
             </button>
             <button
               onClick={() => handleModerate(user.name, "hangup")}

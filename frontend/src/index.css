@@ -55,6 +55,12 @@
   display: none;
 }
 
+/* =========================================================================
+   🔒 LOCKED VIP DESIGN - DO NOT MODIFY BY ANY AI AGENT
+   The power switch layout, shapes, and drop shadows (reverted classic look)
+   have been permanently approved by the user.
+   DO NOT change these CSS classes under any circumstances.
+   ========================================================================= */
 .power-switch {
   --shadow-offset: calc(var(--width) / 20);
   position: relative;

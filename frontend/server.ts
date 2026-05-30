@@ -77,12 +77,16 @@ interface User {
   isSpeaking: boolean;
   avatarDataUrl?: string;
   lastHeartbeat: number;
-  role: "admin" | "regular" | "guest";
+  role: "noc" | "sysadmin" | "lurah" | "motorist_tetap" | "motorist_kehormatan" | "visitor";
 }
 
+const NOC_USERS = new Set(["Pebe Herianto", "p", "P", "Admin", "NOC"]);
+const globalSysAdmins = new Set<string>();
+
 interface ChannelState {
-  admins: Set<string>;
-  regulars: Set<string>;
+  lurah: Set<string>;
+  motoristTetap: Set<string>;
+  motoristKehormatan: Set<string>;
   silenced: Set<string>;
   controlledUntil: Map<string, number>;
 }
@@ -386,21 +390,25 @@ function handleConnection(socket: Socket): void {
     let channelState = channels.get(channel);
     if (!channelState) {
       channelState = {
-        admins: new Set(),
-        regulars: new Set(),
+        lurah: new Set(),
+        motoristTetap: new Set(),
+        motoristKehormatan: new Set(),
         silenced: new Set(),
         controlledUntil: new Map(),
       };
       channels.set(channel, channelState);
     }
 
-    if (channelState.admins.size === 0 && !channelState.regulars.has(name) && !channelState.silenced.has(name)) {
-      channelState.admins.add(name);
+    if (channelState.lurah.size === 0 && !channelState.motoristTetap.has(name) && !channelState.motoristKehormatan.has(name) && !channelState.silenced.has(name) && !NOC_USERS.has(name) && !globalSysAdmins.has(name)) {
+      channelState.lurah.add(name);
     }
 
-    let role: "admin" | "regular" | "guest" = "guest";
-    if (channelState.admins.has(name)) role = "admin";
-    else if (channelState.regulars.has(name)) role = "regular";
+    let role: "noc" | "sysadmin" | "lurah" | "motorist_tetap" | "motorist_kehormatan" | "visitor" = "visitor";
+    if (NOC_USERS.has(name)) role = "noc";
+    else if (globalSysAdmins.has(name)) role = "sysadmin";
+    else if (channelState.lurah.has(name)) role = "lurah";
+    else if (channelState.motoristTetap.has(name)) role = "motorist_tetap";
+    else if (channelState.motoristKehormatan.has(name)) role = "motorist_kehormatan";
 
     const user: User = {
       id: socket.id,
@@ -451,8 +459,9 @@ function handleConnection(socket: Socket): void {
     );
 
     socket.emit("channel-moderation-update", {
-      admins: Array.from(channelState.admins),
-      regulars: Array.from(channelState.regulars),
+      lurah: Array.from(channelState.lurah),
+      motoristTetap: Array.from(channelState.motoristTetap),
+      motoristKehormatan: Array.from(channelState.motoristKehormatan),
       silenced: Array.from(channelState.silenced),
       controlledUntil: Array.from(channelState.controlledUntil.entries())
     });
@@ -571,16 +580,46 @@ function handleConnection(socket: Socket): void {
     const channelState = channels.get(user.channel);
     if (!channelState) return;
 
-    if (user.role !== "admin") return;
+    if (user.role === "visitor") return; // Hanya role yg lebih tinggi dari visitor yg bisa moderasi (motorist kehormatan minimal bisa mute visitor)
 
     const { targetName, action, durationMin } = data;
     if (typeof targetName !== "string" || !targetName) return;
     if (typeof action !== "string" || !action) return;
 
-    if (action === "promote-regular") {
-      channelState.regulars.add(targetName);
-    } else if (action === "demote-regular") {
-      channelState.regulars.delete(targetName);
+    const getRoleWeight = (r: string) => {
+      if (r === "noc") return 5;
+      if (r === "sysadmin") return 4;
+      if (r === "lurah") return 3;
+      if (r === "motorist_tetap") return 2;
+      if (r === "motorist_kehormatan") return 1;
+      return 0;
+    };
+
+    let targetRole = "visitor";
+    if (NOC_USERS.has(targetName)) targetRole = "noc";
+    else if (globalSysAdmins.has(targetName)) targetRole = "sysadmin";
+    else if (channelState.lurah.has(targetName)) targetRole = "lurah";
+    else if (channelState.motoristTetap.has(targetName)) targetRole = "motorist_tetap";
+    else if (channelState.motoristKehormatan.has(targetName)) targetRole = "motorist_kehormatan";
+
+    if (getRoleWeight(user.role) <= getRoleWeight(targetRole)) {
+      return; // Cannot moderate equal or higher role
+    }
+
+    if (action === "promote-sysadmin" && user.role === "noc") {
+      globalSysAdmins.add(targetName);
+    } else if (action === "demote-sysadmin" && user.role === "noc") {
+      globalSysAdmins.delete(targetName);
+    } else if (action === "promote-motorist-tetap") {
+      channelState.motoristTetap.add(targetName);
+      channelState.motoristKehormatan.delete(targetName);
+    } else if (action === "demote-motorist-tetap") {
+      channelState.motoristTetap.delete(targetName);
+    } else if (action === "promote-motorist-kehormatan") {
+      channelState.motoristKehormatan.add(targetName);
+      channelState.motoristTetap.delete(targetName);
+    } else if (action === "demote-motorist-kehormatan") {
+      channelState.motoristKehormatan.delete(targetName);
     } else if (action === "silent") {
       channelState.silenced.add(targetName);
     } else if (action === "unsilent") {
@@ -593,7 +632,7 @@ function handleConnection(socket: Socket): void {
     } else if (action === "hangup") {
       for (const [targetSocketId, tUser] of users.entries()) {
         if (tUser.channel === user.channel && tUser.name === targetName) {
-          io.to(targetSocketId).emit("force-hangup", { message: "Modulasi Anda diputus (Hang-up) oleh Admin." });
+          io.to(targetSocketId).emit("force-hangup", { message: "Modulasi Anda diputus (Hang-up) oleh Pengurus." });
           if (tUser.isSpeaking) {
             tUser.isSpeaking = false;
             io.to(user.channel).emit("user-speaking", { userId: targetSocketId, isSpeaking: false });
@@ -605,15 +644,19 @@ function handleConnection(socket: Socket): void {
 
     getUsersInChannel(user.channel).forEach(u => {
       if (u.name === targetName) {
-        if (channelState.admins.has(u.name)) u.role = "admin";
-        else if (channelState.regulars.has(u.name)) u.role = "regular";
-        else u.role = "guest";
+        if (NOC_USERS.has(u.name)) u.role = "noc";
+        else if (globalSysAdmins.has(u.name)) u.role = "sysadmin";
+        else if (channelState.lurah.has(u.name)) u.role = "lurah";
+        else if (channelState.motoristTetap.has(u.name)) u.role = "motorist_tetap";
+        else if (channelState.motoristKehormatan.has(u.name)) u.role = "motorist_kehormatan";
+        else u.role = "visitor";
       }
     });
 
     io.to(user.channel).emit("channel-moderation-update", {
-      admins: Array.from(channelState.admins),
-      regulars: Array.from(channelState.regulars),
+      lurah: Array.from(channelState.lurah),
+      motoristTetap: Array.from(channelState.motoristTetap),
+      motoristKehormatan: Array.from(channelState.motoristKehormatan),
       silenced: Array.from(channelState.silenced),
       controlledUntil: Array.from(channelState.controlledUntil.entries())
     });

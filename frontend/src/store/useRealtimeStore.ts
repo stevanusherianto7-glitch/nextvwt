@@ -7,7 +7,7 @@ export interface RealtimeUser {
   locationState: string;
   isSpeaking: boolean;
   avatarDataUrl?: string;
-  role?: "admin" | "regular" | "guest";
+  role: "noc" | "sysadmin" | "lurah" | "motorist_tetap" | "motorist_kehormatan" | "visitor";
 }
 
 interface RealtimeState {
