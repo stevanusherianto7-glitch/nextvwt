@@ -100,6 +100,7 @@ export default defineConfig(({ mode }) => {
       hmr: process.env.DISABLE_HMR === 'true' ? false : true,
       // Saat HMR dimatikan, watcher juga dimatikan supaya Chrome tidak reload terus-menerus.
       watch: process.env.DISABLE_HMR === 'true' ? null : {},
+      allowedHosts: true,
     },
   };
 });

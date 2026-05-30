@@ -77,7 +77,16 @@ interface User {
   isSpeaking: boolean;
   avatarDataUrl?: string;
   lastHeartbeat: number;
+  role: "admin" | "regular" | "guest";
 }
+
+interface ChannelState {
+  admins: Set<string>;
+  regulars: Set<string>;
+  silenced: Set<string>;
+  controlledUntil: Map<string, number>;
+}
+const channels = new Map<string, ChannelState>();
 
 interface JoinChannelPayload {
   name?: unknown;
@@ -200,6 +209,7 @@ const rateLimits: Record<string, { max: number }> = {
   "webrtc-offer": { max: 60 },
   "webrtc-answer": { max: 60 },
   "webrtc-ice": { max: 240 },
+  "moderate-user": { max: 20 },
 };
 
 const rateBuckets = new Map<string, { count: number; resetAt: number }>();
@@ -373,6 +383,25 @@ function handleConnection(socket: Socket): void {
       io.to(existing.channel).emit("user-left", socket.id);
     }
 
+    let channelState = channels.get(channel);
+    if (!channelState) {
+      channelState = {
+        admins: new Set(),
+        regulars: new Set(),
+        silenced: new Set(),
+        controlledUntil: new Map(),
+      };
+      channels.set(channel, channelState);
+    }
+
+    if (channelState.admins.size === 0 && !channelState.regulars.has(name) && !channelState.silenced.has(name)) {
+      channelState.admins.add(name);
+    }
+
+    let role: "admin" | "regular" | "guest" = "guest";
+    if (channelState.admins.has(name)) role = "admin";
+    else if (channelState.regulars.has(name)) role = "regular";
+
     const user: User = {
       id: socket.id,
       name,
@@ -381,6 +410,7 @@ function handleConnection(socket: Socket): void {
       isSpeaking: false,
       avatarDataUrl: sanitizeAvatarDataUrl(data.avatarDataUrl),
       lastHeartbeat: Date.now(),
+      role,
     };
 
     users.set(socket.id, user);
@@ -393,6 +423,7 @@ function handleConnection(socket: Socket): void {
       locationState: user.locationState,
       isSpeaking: false,
       avatarDataUrl: user.avatarDataUrl || '',
+      role: user.role,
     });
 
     socket.emit("join-success", {
@@ -402,6 +433,7 @@ function handleConnection(socket: Socket): void {
       locationState: user.locationState,
       isSpeaking: false,
       avatarDataUrl: user.avatarDataUrl || '',
+      role: user.role,
       protected: Boolean(getRequiredChannelPin(user.channel)),
     });
 
@@ -414,8 +446,16 @@ function handleConnection(socket: Socket): void {
         locationState: u.locationState,
         isSpeaking: u.isSpeaking,
         avatarDataUrl: u.avatarDataUrl || '',
+        role: u.role,
       }))
     );
+
+    socket.emit("channel-moderation-update", {
+      admins: Array.from(channelState.admins),
+      regulars: Array.from(channelState.regulars),
+      silenced: Array.from(channelState.silenced),
+      controlledUntil: Array.from(channelState.controlledUntil.entries())
+    });
 
     log.info(`[Socket] ${user.name} joined channel ${user.channel}`);
   });
@@ -426,6 +466,22 @@ function handleConnection(socket: Socket): void {
 
     const user = users.get(socket.id);
     if (!user) return;
+
+    if (isSpeaking) {
+      const channelState = channels.get(user.channel);
+      if (channelState) {
+        if (channelState.silenced.has(user.name)) {
+          socket.emit("moderation-alert", { type: "silent", message: "Anda telah dibungkam (Silent) oleh Admin." });
+          return;
+        }
+        const controlTime = channelState.controlledUntil.get(user.name);
+        if (controlTime && controlTime > Date.now()) {
+          const s = Math.ceil((controlTime - Date.now()) / 1000);
+          socket.emit("moderation-alert", { type: "controlled", message: `Anda terkena Controlled. Tunggu ${s} detik.` });
+          return;
+        }
+      }
+    }
 
     user.isSpeaking = isSpeaking;
     user.lastHeartbeat = Date.now();
@@ -440,6 +496,13 @@ function handleConnection(socket: Socket): void {
     if (isRateLimited(socket.id, "audio-stream")) return;
     const user = users.get(socket.id);
     if (!user) return;
+
+    const channelState = channels.get(user.channel);
+    if (channelState) {
+      if (channelState.silenced.has(user.name)) return;
+      const controlTime = channelState.controlledUntil.get(user.name);
+      if (controlTime && controlTime > Date.now()) return;
+    }
 
     const size = getPayloadSize(audioData);
     if (size <= 0 || size > 64 * 1024) return;
@@ -499,6 +562,71 @@ function handleConnection(socket: Socket): void {
       senderId: socket.id,
       candidate: data.candidate,
     });
+  });
+
+  socket.on("moderate-user", (data: { targetName?: string, action?: string, durationMin?: number }) => {
+    if (isRateLimited(socket.id, "moderate-user")) return;
+    const user = users.get(socket.id);
+    if (!user) return;
+    const channelState = channels.get(user.channel);
+    if (!channelState) return;
+
+    if (user.role !== "admin") return;
+
+    const { targetName, action, durationMin } = data;
+    if (typeof targetName !== "string" || !targetName) return;
+    if (typeof action !== "string" || !action) return;
+
+    if (action === "promote-regular") {
+      channelState.regulars.add(targetName);
+    } else if (action === "demote-regular") {
+      channelState.regulars.delete(targetName);
+    } else if (action === "silent") {
+      channelState.silenced.add(targetName);
+    } else if (action === "unsilent") {
+      channelState.silenced.delete(targetName);
+    } else if (action === "control") {
+      const duration = durationMin || 3;
+      channelState.controlledUntil.set(targetName, Date.now() + duration * 60 * 1000);
+    } else if (action === "uncontrol") {
+      channelState.controlledUntil.delete(targetName);
+    } else if (action === "hangup") {
+      for (const [targetSocketId, tUser] of users.entries()) {
+        if (tUser.channel === user.channel && tUser.name === targetName) {
+          io.to(targetSocketId).emit("force-hangup", { message: "Modulasi Anda diputus (Hang-up) oleh Admin." });
+          if (tUser.isSpeaking) {
+            tUser.isSpeaking = false;
+            io.to(user.channel).emit("user-speaking", { userId: targetSocketId, isSpeaking: false });
+          }
+        }
+      }
+      return; 
+    }
+
+    getUsersInChannel(user.channel).forEach(u => {
+      if (u.name === targetName) {
+        if (channelState.admins.has(u.name)) u.role = "admin";
+        else if (channelState.regulars.has(u.name)) u.role = "regular";
+        else u.role = "guest";
+      }
+    });
+
+    io.to(user.channel).emit("channel-moderation-update", {
+      admins: Array.from(channelState.admins),
+      regulars: Array.from(channelState.regulars),
+      silenced: Array.from(channelState.silenced),
+      controlledUntil: Array.from(channelState.controlledUntil.entries())
+    });
+
+    io.to(user.channel).emit("channel-users", getUsersInChannel(user.channel).map((u) => ({
+      id: u.id,
+      name: u.name,
+      channel: u.channel,
+      locationState: u.locationState,
+      isSpeaking: u.isSpeaking,
+      avatarDataUrl: u.avatarDataUrl || '',
+      role: u.role,
+    })));
   });
 
   socket.on("disconnect", (reason) => {

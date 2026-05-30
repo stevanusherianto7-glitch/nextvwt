@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
-import { Radio, User as UserIcon } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Radio, User as UserIcon, Crown, Star, VolumeX, Clock, PhoneOff } from "lucide-react";
 import { type RealtimeUser } from "../store/useRealtimeStore";
+import { useAppStore } from "../store/useAppStore";
 import { cn } from "../lib/utils";
 
 export function UserListModal({
@@ -29,16 +30,31 @@ export function UserListModal({
     return () => clearTimeout(t);
   }, []);
 
+  const [activeMenuUserId, setActiveMenuUserId] = useState<string | null>(null);
+  const currentUserRole = users.find((u) => u.id === currentUserId)?.role;
+  const isAdmin = currentUserRole === "admin";
+  const socket = useAppStore((s) => s.socket);
+
+  const handleModerate = (targetName: string, action: string, durationMin?: number) => {
+    if (socket) socket.emit("moderate-user", { targetName, action, durationMin });
+    setActiveMenuUserId(null);
+  };
+
   const renderUserCard = (
     user: RealtimeUser,
     mode: "modulating" | "joined",
   ) => (
-    <div
-      key={`${mode}-${user.id}`}
-      onClick={(e) => e.stopPropagation()}
-      data-testid={
-        mode === "modulating" ? "modulating-user-card" : "joined-user-card"
-      }
+    <div key={`${mode}-${user.id}`} className="flex flex-col gap-1.5">
+      <div
+        onClick={(e) => {
+          e.stopPropagation();
+          if (isAdmin && user.id !== currentUserId) {
+            setActiveMenuUserId((prev) => (prev === user.id ? null : user.id));
+          }
+        }}
+        data-testid={
+          mode === "modulating" ? "modulating-user-card" : "joined-user-card"
+        }
       className={cn(
         "flex items-center gap-3.5 p-3 rounded-2xl border transition-all duration-150 cursor-default shadow-[0_4px_10px_rgba(0,0,0,0.1),inset_0_2px_0_rgba(255,255,255,0.8),inset_0_-3px_0_rgba(0,0,0,0.06)] transform hover:scale-[1.01] active:scale-[0.98]",
         user.isSpeaking
@@ -74,8 +90,10 @@ export function UserListModal({
       </div>
 
       <div className="flex-1 min-w-0 flex flex-col justify-center">
-        <div className="font-bold text-slate-800 text-[15.5px] leading-tight truncate">
-          {user.name} {user.id === currentUserId && " (You)"}
+        <div className="font-bold text-slate-800 text-[15.5px] leading-tight truncate flex items-center gap-1.5">
+          {user.role === "admin" && <Crown className="w-4 h-4 text-amber-500 fill-amber-500 shrink-0" />}
+          {user.role === "regular" && <Star className="w-4 h-4 text-slate-300 fill-white drop-shadow-md stroke-slate-400 shrink-0" />}
+          <span className="truncate">{user.name} {user.id === currentUserId && " (You)"}</span>
         </div>
         <div className="text-[12px] text-slate-400 truncate mt-1 flex items-center gap-1.5">
           <span className="text-[10px] font-black font-mono px-1.5 py-0.5 rounded bg-blue-50 border border-blue-200 text-blue-600 shadow-sm leading-none flex items-center justify-center">
@@ -94,6 +112,42 @@ export function UserListModal({
       ) : (
         <div className="h-2.5 w-2.5 rounded-full bg-emerald-400 shadow-[0_0_6px_rgba(52,211,153,0.7)]" />
       )}
+      </div>
+      <AnimatePresence>
+        {activeMenuUserId === user.id && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            className="flex items-center gap-2 overflow-hidden justify-end pr-1"
+          >
+            <button
+              onClick={() => handleModerate(user.name, user.role === "regular" ? "demote-regular" : "promote-regular")}
+              className="px-2.5 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-600 rounded-lg shadow-[0_2px_4px_rgba(0,0,0,0.05)] border border-blue-200/50 text-[11px] font-bold flex items-center gap-1.5 transition-colors"
+            >
+              <Star className="w-3.5 h-3.5" /> {user.role === "regular" ? "Cabut Warga" : "Warga Tetap"}
+            </button>
+            <button
+              onClick={() => handleModerate(user.name, "hangup")}
+              className="px-2.5 py-1.5 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg shadow-[0_2px_4px_rgba(0,0,0,0.05)] border border-red-200/50 text-[11px] font-bold flex items-center gap-1.5 transition-colors"
+            >
+              <PhoneOff className="w-3.5 h-3.5" /> Hang-up
+            </button>
+            <button
+              onClick={() => handleModerate(user.name, "control", 3)}
+              className="px-2.5 py-1.5 bg-orange-50 hover:bg-orange-100 text-orange-600 rounded-lg shadow-[0_2px_4px_rgba(0,0,0,0.05)] border border-orange-200/50 text-[11px] font-bold flex items-center gap-1.5 transition-colors"
+            >
+              <Clock className="w-3.5 h-3.5" /> Control 3m
+            </button>
+            <button
+              onClick={() => handleModerate(user.name, "silent")}
+              className="px-2.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-white rounded-lg shadow-[0_2px_4px_rgba(0,0,0,0.1)] border border-slate-700 text-[11px] font-bold flex items-center gap-1.5 transition-colors"
+            >
+              <VolumeX className="w-3.5 h-3.5" /> Silent
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 

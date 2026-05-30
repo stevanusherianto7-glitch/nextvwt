@@ -158,6 +158,7 @@ export function RadioDisplay({
 
               {/* Signal Strength & Latency Meter */}
               <div
+                data-testid="signal-indicator"
                 className="relative flex items-end gap-[1px] h-7 pb-1 mr-1 cursor-pointer"
                 onClick={() => {
                   setShowLatency(true);

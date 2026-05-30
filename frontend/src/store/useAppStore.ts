@@ -438,6 +438,36 @@ export const useAppStore = create<AppState>((set, get) => ({
       },
     );
 
+    socket.on("channel-moderation-update", (data: { silenced: string[], controlledUntil: [string, number][] }) => {
+      const myName = get().currentUser?.name;
+      if (!myName) return;
+      const isSilenced = data.silenced.includes(myName);
+      const controlledPair = data.controlledUntil.find(c => c[0] === myName);
+      const controlledUntil = controlledPair ? controlledPair[1] : null;
+      useRealtimeStore.getState().setModerationStatus(isSilenced, controlledUntil);
+    });
+
+    socket.on("moderation-alert", (data: { type: string; message: string }) => {
+      if (typeof window !== "undefined") {
+        window.alert(data.message);
+      }
+    });
+
+    socket.on("force-hangup", (data: { message: string }) => {
+      if (typeof window !== "undefined") {
+        window.alert(data.message);
+      }
+      const rtc = get().webRtcManager;
+      if (rtc) {
+        rtc.setMute(true);
+        useRealtimeStore.getState().setTransmitting(false);
+        if (socket.id) {
+          useRealtimeStore.getState().setSpeaking(socket.id, false);
+        }
+        if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
+      }
+    });
+
     set({ socket, presenceService, webRtcManager });
   },
 

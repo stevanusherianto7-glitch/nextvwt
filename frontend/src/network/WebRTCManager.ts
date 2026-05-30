@@ -466,6 +466,15 @@ export class WebRTCManager {
       return false;
     }
 
+    // Bangunkan (resume) Web Audio API Context jika sedang ditangguhkan oleh peramban
+    // Ini mencegah pengiriman audio kosong (0s / silence) ke pendengar
+    if (!isMuted && this.audioContext && this.audioContext.state === "suspended") {
+      console.log("[WebRTC] Membangkitkan AudioContext dari mode suspended...");
+      this.audioContext.resume().catch((err) => {
+        console.warn("[WebRTC] Gagal membangkitkan AudioContext:", err);
+      });
+    }
+
     if (this.rawStream) {
       this.rawStream.getAudioTracks().forEach((track) => {
         track.enabled = !isMuted;

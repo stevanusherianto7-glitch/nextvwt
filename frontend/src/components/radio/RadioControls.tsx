@@ -51,22 +51,22 @@ export function RadioControls({
           {/* Main cross arms - BEZEL */}
           <div className="absolute left-[8px] right-[8px] top-[40px] h-[100px] rounded-[50px] bg-gradient-to-b from-[#ffffff] via-[#e2e8f0] to-[#94a3b8] shadow-[inset_0_4px_10px_rgba(255,255,255,1),inset_0_-4px_8px_rgba(0,0,0,0.2)] border border-black/20"></div>
           
-          <div className="absolute top-[8px] bottom-[8px] left-[calc(50%-50px)] w-[100px] rounded-[50px] bg-gradient-to-b from-[#ffffff] via-[#e2e8f0] to-[#94a3b8] shadow-[inset_0_4px_10px_rgba(255,255,255,1),inset_0_-4px_8px_rgba(0,0,0,0.2)] border border-black/20"></div>
+          <div className="absolute top-[8px] bottom-[8px] left-[calc(50%_-_50px)] w-[100px] rounded-[50px] bg-gradient-to-b from-[#ffffff] via-[#e2e8f0] to-[#94a3b8] shadow-[inset_0_4px_10px_rgba(255,255,255,1),inset_0_-4px_8px_rgba(0,0,0,0.2)] border border-black/20"></div>
           
           {/* Perfect center cover to hide overlapping internal borders */}
-          <div className="absolute top-[41px] left-[calc(50%-49px)] w-[98px] h-[98px] bg-gradient-to-b from-[#f1f5f9] to-[#cbd5e1] shadow-[0_0_8px_4px_rgba(226,232,240,1)]"></div>
+          <div className="absolute top-[41px] left-[calc(50%_-_49px)] w-[98px] h-[98px] bg-gradient-to-b from-[#f1f5f9] to-[#cbd5e1] shadow-[0_0_8px_4px_rgba(226,232,240,1)]"></div>
         </div>
 
         {/* Matte black grooves */}
         <div className="absolute inset-0 z-[2] drop-shadow-[0_1px_1px_rgba(255,255,255,0.5)] select-none pointer-events-none">
           {/* Left Black Groove (Scan) */}
-          <div className="absolute left-[18px] right-[calc(50%+48px)] top-[50px] h-[80px] rounded-l-[40px] rounded-r-[12px] bg-gradient-to-b from-[#111] to-[#222] shadow-[inset_0_10px_20px_rgba(0,0,0,1)] border border-[#000]"></div>
+          <div className="absolute left-[18px] right-[calc(50%_+_48px)] top-[50px] h-[80px] rounded-l-[40px] rounded-r-[12px] bg-gradient-to-b from-[#111] to-[#222] shadow-[inset_0_10px_20px_rgba(0,0,0,1)] border border-[#000]"></div>
           
           {/* Right Black Groove (Set) */}
-          <div className="absolute left-[calc(50%+48px)] right-[18px] top-[50px] h-[80px] rounded-r-[40px] rounded-l-[12px] bg-gradient-to-b from-[#111] to-[#222] shadow-[inset_0_10px_20px_rgba(0,0,0,1)] border border-[#000]"></div>
+          <div className="absolute left-[calc(50%_+_48px)] right-[18px] top-[50px] h-[80px] rounded-r-[40px] rounded-l-[12px] bg-gradient-to-b from-[#111] to-[#222] shadow-[inset_0_10px_20px_rgba(0,0,0,1)] border border-[#000]"></div>
           
           {/* Vertical Black Groove (Up/Down) */}
-          <div className="absolute top-[18px] bottom-[18px] left-[calc(50%-40px)] w-[80px] rounded-[40px] bg-gradient-to-b from-[#111] to-[#222] shadow-[inset_0_10px_20px_rgba(0,0,0,1)] border border-[#000]"></div>
+          <div className="absolute top-[18px] bottom-[18px] left-[calc(50%_-_40px)] w-[80px] rounded-[40px] bg-gradient-to-b from-[#111] to-[#222] shadow-[inset_0_10px_20px_rgba(0,0,0,1)] border border-[#000]"></div>
         </div>
 
         {/* Real Interactive Control Buttons */}
@@ -75,7 +75,7 @@ export function RadioControls({
           <button
             id="scan-btn"
             onClick={() => setChannelListOpen(true)}
-            className="absolute left-[26px] top-[58px] h-[64px] w-[calc(50%-82px)] bg-gradient-to-b from-[#4a4a4a] via-[#2a2a2a] to-[#121212] text-gray-200 font-bold text-[19px] tracking-wide rounded-l-[32px] rounded-r-[8px] shadow-[0_8px_12px_rgba(0,0,0,0.8),0_2px_4px_rgba(0,0,0,0.5),inset_0_2px_2px_rgba(255,255,255,0.25),inset_0_-2px_4px_rgba(0,0,0,0.6)] border-t-[2px] border-[#666] border-b-[3px] border-[#000] border-l-[2px] border-l-[#555] active:translate-y-[2px] active:border-b-[1px] active:shadow-[0_2px_4px_rgba(0,0,0,0.8),inset_0_4px_8px_rgba(0,0,0,0.9)] transition-all cursor-pointer select-none"
+            className="absolute left-[26px] top-[58px] h-[64px] w-[calc(50%_-_82px)] bg-gradient-to-b from-[#4a4a4a] via-[#2a2a2a] to-[#121212] text-gray-200 font-bold text-[19px] tracking-wide rounded-l-[32px] rounded-r-[8px] shadow-[0_8px_12px_rgba(0,0,0,0.8),0_2px_4px_rgba(0,0,0,0.5),inset_0_2px_2px_rgba(255,255,255,0.25),inset_0_-2px_4px_rgba(0,0,0,0.6)] border-t-[2px] border-[#666] border-b-[3px] border-[#000] border-l-[2px] border-l-[#555] active:translate-y-[2px] active:border-b-[1px] active:shadow-[0_2px_4px_rgba(0,0,0,0.8),inset_0_4px_8px_rgba(0,0,0,0.9)] transition-all cursor-pointer select-none"
           >
             <span className="drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)]">
               Scan
@@ -86,7 +86,7 @@ export function RadioControls({
           <button
             id="settings-btn"
             onClick={() => setSettingsOpen(true)}
-            className="absolute right-[26px] top-[58px] h-[64px] w-[calc(50%-82px)] bg-gradient-to-b from-[#4a4a4a] via-[#2a2a2a] to-[#121212] text-gray-200 font-bold text-[19px] tracking-wide rounded-r-[32px] rounded-l-[8px] shadow-[0_8px_12px_rgba(0,0,0,0.8),0_2px_4px_rgba(0,0,0,0.5),inset_0_2px_2px_rgba(255,255,255,0.25),inset_0_-2px_4px_rgba(0,0,0,0.6)] border-t-[2px] border-[#666] border-b-[3px] border-[#000] border-r-[2px] border-r-[#555] active:translate-y-[2px] active:border-b-[1px] active:shadow-[0_2px_4px_rgba(0,0,0,0.8),inset_0_4px_8px_rgba(0,0,0,0.9)] transition-all cursor-pointer select-none"
+            className="absolute right-[26px] top-[58px] h-[64px] w-[calc(50%_-_82px)] bg-gradient-to-b from-[#4a4a4a] via-[#2a2a2a] to-[#121212] text-gray-200 font-bold text-[19px] tracking-wide rounded-r-[32px] rounded-l-[8px] shadow-[0_8px_12px_rgba(0,0,0,0.8),0_2px_4px_rgba(0,0,0,0.5),inset_0_2px_2px_rgba(255,255,255,0.25),inset_0_-2px_4px_rgba(0,0,0,0.6)] border-t-[2px] border-[#666] border-b-[3px] border-[#000] border-r-[2px] border-r-[#555] active:translate-y-[2px] active:border-b-[1px] active:shadow-[0_2px_4px_rgba(0,0,0,0.8),inset_0_4px_8px_rgba(0,0,0,0.9)] transition-all cursor-pointer select-none"
           >
             <span className="drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)]">Set</span>
           </button>
@@ -95,7 +95,7 @@ export function RadioControls({
           <button
             id="dpad-up"
             onClick={incrementChannel}
-            className="absolute top-[26px] left-[calc(50%-32px)] w-[64px] h-[62px] bg-gradient-to-b from-[#555555] via-[#333333] to-[#151515] rounded-t-[32px] rounded-b-[6px] shadow-[0_8px_12px_rgba(0,0,0,0.8),0_3px_5px_rgba(0,0,0,0.6),inset_0_2px_2px_rgba(255,255,255,0.3),inset_0_-2px_4px_rgba(0,0,0,0.6)] border-t-[2px] border-[#777] border-b-[3px] border-[#000] border-x-[1.5px] border-x-[#444] active:translate-y-[2px] active:border-b-[1px] active:shadow-[0_2px_4px_rgba(0,0,0,0.8),inset_0_4px_8px_rgba(0,0,0,0.9)] flex items-center justify-center transition-all z-[11] cursor-pointer select-none"
+            className="absolute top-[26px] left-[calc(50%_-_32px)] w-[64px] h-[62px] bg-gradient-to-b from-[#555555] via-[#333333] to-[#151515] rounded-t-[32px] rounded-b-[6px] shadow-[0_8px_12px_rgba(0,0,0,0.8),0_3px_5px_rgba(0,0,0,0.6),inset_0_2px_2px_rgba(255,255,255,0.3),inset_0_-2px_4px_rgba(0,0,0,0.6)] border-t-[2px] border-[#777] border-b-[3px] border-[#000] border-x-[1.5px] border-x-[#444] active:translate-y-[2px] active:border-b-[1px] active:shadow-[0_2px_4px_rgba(0,0,0,0.8),inset_0_4px_8px_rgba(0,0,0,0.9)] flex items-center justify-center transition-all z-[11] cursor-pointer select-none"
           >
             <svg
               width="24"
@@ -111,7 +111,7 @@ export function RadioControls({
           <button
             id="dpad-down"
             onClick={decrementChannel}
-            className="absolute bottom-[26px] left-[calc(50%-32px)] w-[64px] h-[62px] bg-gradient-to-b from-[#444444] via-[#222222] to-[#0a0a0a] rounded-b-[32px] rounded-t-[6px] shadow-[0_8px_12px_rgba(0,0,0,0.8),0_3px_5px_rgba(0,0,0,0.6),inset_0_2px_1px_rgba(255,255,255,0.15),inset_0_-3px_5px_rgba(0,0,0,0.7)] border-t border-[#333] border-b-[4px] border-[#000] border-x-[1.5px] border-x-[#222] active:translate-y-[2px] active:border-b-[2px] active:shadow-[0_2px_4px_rgba(0,0,0,0.8),inset_0_4px_8px_rgba(0,0,0,0.9)] flex items-center justify-center transition-all z-[11] cursor-pointer select-none"
+            className="absolute bottom-[26px] left-[calc(50%_-_32px)] w-[64px] h-[62px] bg-gradient-to-b from-[#444444] via-[#222222] to-[#0a0a0a] rounded-b-[32px] rounded-t-[6px] shadow-[0_8px_12px_rgba(0,0,0,0.8),0_3px_5px_rgba(0,0,0,0.6),inset_0_2px_1px_rgba(255,255,255,0.15),inset_0_-3px_5px_rgba(0,0,0,0.7)] border-t border-[#333] border-b-[4px] border-[#000] border-x-[1.5px] border-x-[#222] active:translate-y-[2px] active:border-b-[2px] active:shadow-[0_2px_4px_rgba(0,0,0,0.8),inset_0_4px_8px_rgba(0,0,0,0.9)] flex items-center justify-center transition-all z-[11] cursor-pointer select-none"
           >
             <svg
               width="24"

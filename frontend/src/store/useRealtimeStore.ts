@@ -7,6 +7,7 @@ export interface RealtimeUser {
   locationState: string;
   isSpeaking: boolean;
   avatarDataUrl?: string;
+  role?: "admin" | "regular" | "guest";
 }
 
 interface RealtimeState {
@@ -23,6 +24,10 @@ interface RealtimeState {
   // Audio state
   isTransmitting: boolean;
   isReceiving: boolean;
+  
+  // Moderation state
+  isSilenced: boolean;
+  controlledUntil: number | null;
 
   // Network health
   serverLatency: number;
@@ -36,6 +41,7 @@ interface RealtimeState {
   setUsersFromList: (users: RealtimeUser[]) => void;
   setTransmitting: (transmitting: boolean) => void;
   setReceiving: (receiving: boolean) => void;
+  setModerationStatus: (isSilenced: boolean, controlledUntil: number | null) => void;
   setServerLatency: (latency: number) => void;
   clearChannelUsers: () => void;
   reset: () => void;
@@ -48,6 +54,8 @@ const initialState = {
   users: {} as Record<string, RealtimeUser>,
   isTransmitting: false,
   isReceiving: false,
+  isSilenced: false,
+  controlledUntil: null,
   serverLatency: 0,
 };
 
@@ -97,6 +105,8 @@ export const useRealtimeStore = create<RealtimeState>((set) => ({
   setTransmitting: (isTransmitting) => set({ isTransmitting }),
 
   setReceiving: (isReceiving) => set({ isReceiving }),
+
+  setModerationStatus: (isSilenced, controlledUntil) => set({ isSilenced, controlledUntil }),
 
   setServerLatency: (serverLatency) => set({ serverLatency }),
 

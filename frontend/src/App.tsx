@@ -388,6 +388,19 @@ export default function App() {
       if (pttLockRef.current) return;
       if (!webRtcManager) return;
 
+      const rtState = useRealtimeStore.getState();
+      if (rtState.isSilenced) {
+        if (navigator.vibrate) navigator.vibrate([50, 100, 50]);
+        window.alert("❌ Anda telah dibungkam (Silent) oleh Admin. Anda tidak bisa bermodulasi.");
+        return;
+      }
+      if (rtState.controlledUntil && Date.now() < rtState.controlledUntil) {
+        if (navigator.vibrate) navigator.vibrate([50, 100, 50]);
+        const s = Math.ceil((rtState.controlledUntil - Date.now()) / 1000);
+        window.alert(`⏱️ Anda sedang dalam masa Control. Tunggu ${s} detik lagi untuk bisa bermodulasi.`);
+        return;
+      }
+
       pttLockRef.current = true;
       try {
         const storeSettings = useAppStore.getState().settings;

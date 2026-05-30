@@ -87,7 +87,8 @@ export class ConnectionManager {
       path: "/socket.io",
       transports: ["polling", "websocket"],
       extraHeaders: {
-        "Bypass-Tunnel-Reminder": "true"
+        "Bypass-Tunnel-Reminder": "true",
+        "ngrok-skip-browser-warning": "true"
       },
       reconnection: true,
       reconnectionAttempts: Infinity,

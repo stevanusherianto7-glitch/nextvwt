@@ -99,8 +99,34 @@ test.describe('NextVWT P2P WebRTC E2E Test Suite', () => {
     await expect(pttButtonAnto).toHaveAttribute('data-state', 'idle');
     await expect(pttButtonAnto).toHaveAttribute('data-channel-busy', 'false');
 
+    // 5. Verifikasi injeksi WebRTC Audio & Status Playback
+    console.log('[E2E Test] Memverifikasi elemen <audio> WebRTC di DOM...');
+    const audioAbi = pageAbi.locator('audio[id^="webrtc-audio-"]');
+    const audioAnto = pageAnto.locator('audio[id^="webrtc-audio-"]');
+    
+    // Pastikan masing-masing tab memiliki setidaknya 1 elemen audio dari peer-nya
+    // (Bisa lebih dari 1 jika ada user zombie dari pengujian sebelumnya karena server state persisten)
+    await expect(audioAbi.first()).toBeAttached({ timeout: 10000 });
+    await expect(audioAnto.first()).toBeAttached({ timeout: 10000 });
+
+    // Pastikan browser tidak memblokir autoplay (audio.paused harus false)
+    const isAbiAudioPlaying = await audioAbi.first().evaluate((el: HTMLAudioElement) => !el.paused);
+    expect(isAbiAudioPlaying).toBe(true);
+
+    const isAntoAudioPlaying = await audioAnto.first().evaluate((el: HTMLAudioElement) => !el.paused);
+    expect(isAntoAudioPlaying).toBe(true);
+
+    // 6. Verifikasi Latency UI (Real-time Ping-Pong Test)
+    console.log('[E2E Test] Memverifikasi Latency Ping-Pong UI...');
+    // Klik ikon indikator sinyal di layar utama tab Abi
+    await pageAbi.locator('[data-testid="signal-indicator"]').click();
+    
+    // Tunggu teks Latency muncul dengan pola Regex
+    const latencyText = pageAbi.locator('text=/Latency: \\d+ms/i');
+    await expect(latencyText).toBeVisible();
+
     // Bersihkan sesi browser
-    console.log('[E2E Test] Skenario E2E WebRTC Mesh P2P sukses!');
+    console.log('[E2E Test] Skenario E2E WebRTC Mesh P2P sukses secara menyeluruh!');
     await contextAbi.close();
     await contextAnto.close();
   });

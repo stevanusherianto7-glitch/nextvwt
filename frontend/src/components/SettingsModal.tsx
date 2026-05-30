@@ -12,6 +12,7 @@ import {
   Navigation,
   Loader2,
 } from "lucide-react";
+import { Geolocation } from "@capacitor/geolocation";
 import { cn } from "../lib/utils";
 import { useAppStore } from "../store/useAppStore";
 import { AudioInputDevicePanel } from "./karaoke/AudioInputDevicePanel";
@@ -801,54 +802,43 @@ export function SettingsModal({
     "form" | "provinceList" | "cityList"
   >("form");
 
-  const handleAutoDetectLocation = () => {
-    if (!navigator.geolocation) {
-      alert("Geolokasi tidak didukung oleh browser Anda.");
-      return;
-    }
+  const handleAutoDetectLocation = async () => {
+    try {
+      const position = await Geolocation.getCurrentPosition({
+        enableHighAccuracy: true,
+      });
 
-    setIsLocating(true);
-    navigator.geolocation.getCurrentPosition(
-      async (position) => {
-        try {
-          const { latitude, longitude } = position.coords;
-          const response = await fetch(
-            `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=10&addressdetails=1`,
-          );
-          const data = await response.json();
+      const response = await fetch(
+        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${position.coords.latitude}&lon=${position.coords.longitude}`,
+      );
+      const data = await response.json();
 
-          if (data && data.address) {
-            let city =
-              data.address.city ||
-              data.address.town ||
-              data.address.county ||
-              data.address.region ||
-              "UNKNOWN CITY";
-            let state = data.address.state || "UNKNOWN PROVINCE";
+      if (data && data.address) {
+        let city =
+          data.address.city ||
+          data.address.regency ||
+          data.address.town ||
+          data.address.village ||
+          "";
+        let state = data.address.state || data.address.province || "";
 
-            // Format to match uppercase convention
-            city = city
-              .toUpperCase()
-              .replace("KOTA ", "")
-              .replace("KABUPATEN ", "");
-            state = state.toUpperCase();
+        city = city.toUpperCase().replace(/KOTA /g, "").replace(/KABUPATEN /g, "KAB. ");
+        state = state.toUpperCase();
 
+        if (city && state) {
+          if (locationPickerMode === "form") {
             setLocation(`${city}, ${state}`);
           }
-        } catch (error) {
-          console.error("Gagal mendeteksi lokasi:", error);
-          alert("Gagal mendapatkan nama lokasi dari koordinat.");
-        } finally {
-          setIsLocating(false);
+        } else {
+          alert("Gagal memformat data lokasi.");
         }
-      },
-      (error) => {
-        console.error("Geolokasi error:", error);
-        alert("Gagal mendeteksi lokasi. Pastikan izin lokasi diberikan.");
-        setIsLocating(false);
-      },
-      { timeout: 10000 },
-    );
+      }
+    } catch (error) {
+      console.error("[Location] Error autodetect:", error);
+      alert(
+        "Gagal mendeteksi lokasi. Pastikan GPS aktif dan izin Lokasi telah diberikan untuk aplikasi ini di Pengaturan Android.",
+      );
+    }
   };
 
   const convertAvatarToWebpDataUrl = async (file: File): Promise<string> => {
