@@ -33,6 +33,16 @@ export class ConnectionManager {
   private resolveServerUrl(serverUrl?: string): string {
     if (serverUrl && serverUrl.trim()) return serverUrl.trim();
 
+    // Cek localStorage untuk URL yang disimpan user dari Settings UI
+    if (typeof window !== "undefined") {
+      try {
+        const savedUrl = localStorage.getItem("nexvwt_server_url");
+        if (savedUrl && savedUrl.trim()) return savedUrl.trim();
+      } catch {
+        // localStorage tidak tersedia (private mode, dll)
+      }
+    }
+
     const envUrl = import.meta.env.VITE_SIGNALING_URL as string | undefined;
     if (envUrl && envUrl.trim()) return envUrl.trim();
 

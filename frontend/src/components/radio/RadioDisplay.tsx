@@ -59,7 +59,7 @@ export function RadioDisplay({
   let lcdTextColor = "text-[#1a0c02]";
   let lcdTextShadow = "0 0 6px rgba(255, 140, 0, 0.95), 0 0 12px rgba(255, 69, 0, 0.8)";
   let lcdTextBgColor = "text-[#b43200]/15";
-  let displayFrame = "bg-[linear-gradient(160deg,#f8fafc_0%,#cbd5e1_25%,#94a3b8_50%,#cbd5e1_75%,#f1f5f9_100%)] border-[#64748b] border-t-[#ffffff] border-b-[#475569]";
+  let displayFrame = "bg-[linear-gradient(160deg,#f8fafc_0%,#cbd5e1_25%,#94a3b8_50%,#cbd5e1_75%,#f1f5f9_100%)] border-[#cbd5e1] border-t-[#ffffff] border-b-[#64748b]";
 
   if (theme === "Taktis (Hijau)") {
     lcdBg = "bg-[#4ade80]";
@@ -105,7 +105,7 @@ export function RadioDisplay({
   return (
     <div className={cn("w-full p-3 rounded-[2rem] shadow-[0_12px_32px_rgba(0,0,0,0.6),inset_0_2px_4px_rgba(255,255,255,0.9),inset_0_-3px_5px_rgba(0,0,0,0.3)] border-[2px] mb-5 shrink-0 select-none relative overflow-hidden", displayFrame)}>
       {/* Glossy specular highlight reflection for the metal frame */}
-      <div className="absolute inset-0 bg-gradient-to-br from-white/60 via-transparent to-transparent pointer-events-none rounded-[2rem]"></div>
+      <div className="absolute inset-0 bg-gradient-to-br from-white/60 via-transparent to-transparent pointer-events-none"></div>
       <div className={cn("h-[120px] rounded-[1.2rem] p-3 border-[3px] border-[#161616] flex flex-col justify-between relative overflow-hidden shrink-0", lcdBg, lcdShadow)}>
         {/* Bezel scanlines and shadow effect */}
         <div
@@ -118,7 +118,7 @@ export function RadioDisplay({
           }}
         />
 
-        <div className="absolute top-0 left-0 right-0 h-1/2 bg-gradient-to-b from-white/12 to-transparent pointer-events-none rounded-t-[1rem] z-10"></div>
+        <div className="absolute top-0 left-0 right-0 h-1/2 bg-gradient-to-b from-white/12 to-transparent pointer-events-none z-10"></div>
 
         {bootStatus === "off" ? null : bootStatus === "fetching" || bootStatus === "authorizing" ? (
           <div className="w-full h-full flex flex-col items-center justify-center relative z-10 text-center px-2 pt-2">
@@ -144,7 +144,7 @@ export function RadioDisplay({
                   )
                 }
               >
-                <User3D color1="#38bdf8" color2="#0284c7" size={25} />
+                <User3D color1="#38bdf8" color2="#0284c7" size={30} />
                 <span className={cn("font-sans text-[18px] font-bold tracking-tight truncate max-w-[150px] drop-shadow-[0_1px_0px_rgba(255,255,255,0.35)]", lcdTextColor)}>
                   {currentUser?.name || fallbackUsername}
                 </span>
@@ -206,7 +206,7 @@ export function RadioDisplay({
                 className="flex items-end gap-1.5 mt-2 cursor-pointer"
                 onClick={() => setShowChannelInfo(true)}
               >
-                <span className={cn("font-bold text-[18px] mb-0.5 tracking-wide drop-shadow-[0_1px_0px_rgba(255,255,255,0.35)]", lcdTextColor)}>
+                <span className={cn("font-bold text-[22px] translate-y-[1px] tracking-wide drop-shadow-[0_1px_0px_rgba(255,255,255,0.35)]", lcdTextColor)}>
                   CH
                 </span>
                 <div className="relative leading-none h-[2.5rem] w-[4.25rem]">
@@ -244,15 +244,15 @@ export function RadioDisplay({
                 >
                   <div
                     className={cn(
-                      "relative w-[32px] h-[26px]",
+                      "relative w-[38px] h-[32px]",
                       blinkUsers ? "animate-pulse" : "",
                     )}
                   >
                     <div className="absolute right-0 top-0">
-                      <User3D color1="#fef08a" color2="#ca8a04" size={20} />
+                      <User3D color1="#fef08a" color2="#ca8a04" size={24} />
                     </div>
                     <div className="absolute left-0 bottom-0">
-                      <User3D color1="#38bdf8" color2="#0284c7" size={20} />
+                      <User3D color1="#38bdf8" color2="#0284c7" size={24} />
                     </div>
                   </div>
                   <span className="text-[1.75rem] font-medium font-sans text-black tracking-tight leading-none">

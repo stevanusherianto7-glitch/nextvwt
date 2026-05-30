@@ -7,19 +7,42 @@ export class PlaybackQueue {
   private queue: Blob[] = [];
   private isPlaying = false;
   private destroyed = false;
+  private isSuspended = false;
   private currentAudio: HTMLAudioElement | null = null;
 
   /** Tambahkan audio blob ke antrian dan mulai playback jika idle */
   enqueue(blob: Blob): void {
     if (this.destroyed) return;
     this.queue.push(blob);
-    if (!this.isPlaying) {
+    if (!this.isPlaying && !this.isSuspended) {
+      this.playNext();
+    }
+  }
+
+  /** Suspend antrean (misal saat PTT ditekan) */
+  suspend(): void {
+    this.isSuspended = true;
+    if (this.currentAudio) {
+      this.currentAudio.pause();
+    }
+  }
+
+  /** Lanjutkan antrean (saat PTT dilepas) */
+  resume(): void {
+    this.isSuspended = false;
+    if (this.currentAudio && this.isPlaying) {
+      this.currentAudio.play().catch(err => {
+        console.warn("[PlaybackQueue] Error resuming audio:", err);
+        this.currentAudio = null;
+        this.playNext();
+      });
+    } else if (!this.isPlaying) {
       this.playNext();
     }
   }
 
   private async playNext(): Promise<void> {
-    if (this.destroyed || this.queue.length === 0) {
+    if (this.destroyed || this.queue.length === 0 || this.isSuspended) {
       this.isPlaying = false;
       return;
     }

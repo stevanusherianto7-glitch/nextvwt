@@ -76,6 +76,7 @@ export class SafeAudioEngine {
     }
 
     try {
+      this.playbackQueue.suspend();
       await this.initializeContext();
 
       this.mediaStream = await navigator.mediaDevices.getUserMedia({
@@ -147,6 +148,7 @@ export class SafeAudioEngine {
     this.mediaStream = null;
     this.mediaRecorder = null;
     this.isRecording = false;
+    this.playbackQueue.resume();
 
     if (this.socket.connected) {
       this.socket.emit("speaking-status", false);

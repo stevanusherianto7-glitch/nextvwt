@@ -40,10 +40,10 @@ export function UserListModal({
         mode === "modulating" ? "modulating-user-card" : "joined-user-card"
       }
       className={cn(
-        "flex items-center gap-3.5 p-3 rounded-2xl border transition-all duration-150 cursor-default",
+        "flex items-center gap-3.5 p-3 rounded-2xl border transition-all duration-150 cursor-default shadow-[0_4px_10px_rgba(0,0,0,0.1),inset_0_2px_0_rgba(255,255,255,0.8),inset_0_-3px_0_rgba(0,0,0,0.06)] transform hover:scale-[1.01] active:scale-[0.98]",
         user.isSpeaking
-          ? "bg-green-50/70 border-green-300 shadow-[0_3px_6px_rgba(34,197,94,0.08),inset_0_1.5px_0_rgba(255,255,255,1)]"
-          : "bg-gradient-to-b from-white to-[#f8fafc] border-slate-200/85 shadow-[0_2px_5px_rgba(0,0,0,0.03),inset_0_1.5px_0_rgba(255,255,255,1)]",
+          ? "bg-gradient-to-b from-green-50 to-green-100/50 border-green-300 shadow-[0_6px_12px_rgba(34,197,94,0.15),inset_0_2px_0_rgba(255,255,255,0.8),inset_0_-3px_0_rgba(20,100,30,0.1)]"
+          : "bg-gradient-to-b from-white to-[#f1f5f9] border-slate-200/85",
       )}
     >
       <div
@@ -112,9 +112,15 @@ export function UserListModal({
         aria-hidden="true"
       />
 
+      <div className="flex items-center justify-between px-4 py-3 border-b border-slate-200/60 bg-white/80 backdrop-blur-md sticky top-0 z-10 shrink-0 shadow-sm">
+        <h3 className="font-bold text-slate-700 text-[15px]">Daftar Pengguna ({channelUsers.length})</h3>
+        <button onClick={onClose} className="w-8 h-8 flex items-center justify-center rounded-full bg-slate-200 text-slate-600 font-bold hover:bg-slate-300 transition-colors shadow-[inset_0_1px_2px_rgba(255,255,255,0.5),0_1px_2px_rgba(0,0,0,0.1)]">
+          ✕
+        </button>
+      </div>
+
       <div 
-        className="flex-1 overflow-y-auto bg-transparent [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] p-3.5 space-y-3 cursor-pointer"
-        onClick={onClose}
+        className="flex-1 overflow-y-auto bg-transparent [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] p-3.5 space-y-3"
       >
         {isLoading ? (
           <section className="space-y-2">

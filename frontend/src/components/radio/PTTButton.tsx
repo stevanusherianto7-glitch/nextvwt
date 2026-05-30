@@ -42,11 +42,11 @@ export function PTTButton({
         className={cn(
           "w-[85%] font-bold text-4xl tracking-widest py-6 rounded-[3rem] select-none touch-none relative z-10 overflow-hidden cursor-pointer",
           isTransmitting
-            ? "bg-gradient-to-b from-[#ef4444] to-[#991b1b] text-white shadow-[0_4px_8px_rgba(0,0,0,0.4),inset_0_4px_8px_rgba(255,255,255,0.45),inset_0_-8px_16px_rgba(0,0,0,0.3)] border border-[#ef4444]"
-            : "bg-gradient-to-b from-[#22c55e] to-[#15803d] text-white shadow-[0_15px_30px_rgba(0,0,0,0.4),0_5px_10px_rgba(0,0,0,0.3),inset_0_4px_10px_rgba(255,255,255,0.55),inset_0_-10px_20px_rgba(0,0,0,0.3)] border-t-[2px] border-white/50 border-b-[4px] border-b-black/60 border-x border-white/20",
+            ? "bg-gradient-to-b from-[#ef4444] to-[#991b1b] text-white shadow-[0_4px_8px_rgba(0,0,0,0.4),inset_0_4px_8px_rgba(252,165,165,0.45),inset_0_-8px_16px_rgba(0,0,0,0.3)] border border-[#ef4444]"
+            : "bg-gradient-to-b from-[#22c55e] to-[#15803d] text-white shadow-[0_15px_30px_rgba(0,0,0,0.4),0_5px_10px_rgba(0,0,0,0.3),inset_0_4px_10px_rgba(134,239,172,0.6),inset_0_-10px_20px_rgba(0,0,0,0.3)] border-t-[2px] border-green-400 border-b-[4px] border-b-black/60 border-x border-green-500",
         )}
       >
-        <div className="absolute inset-x-3 top-2 h-[45%] bg-gradient-to-b from-white/40 via-white/5 to-transparent rounded-t-[2.5rem] pointer-events-none z-10"></div>
+        <div className="absolute inset-x-3 top-2 h-[45%] bg-gradient-to-b from-green-100/40 via-green-100/5 to-transparent rounded-t-[2.5rem] pointer-events-none z-10"></div>
 
         <span className="font-black text-white tracking-widest relative z-20">
           PTT

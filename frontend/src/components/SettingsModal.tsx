@@ -1933,27 +1933,109 @@ export function SettingsModal({
           </button>
         </div>
 
-        {/* Android Server Settings (Only visible in Android WebView via Javascript Bridge) */}
-        {typeof window !== "undefined" && (window as any).AndroidBridge && (
-          <>
-            <SectionHeader title="Koneksi Android" />
-            <div className="bg-white px-4 py-3 border-b border-gray-200 flex flex-col gap-2">
-              <button
-                type="button"
-                onClick={() => {
-                  playClickSfx();
-                  (window as any).AndroidBridge.showSetServerDialog();
-                }}
-                className="w-full py-3.5 text-white font-bold bg-blue-600 hover:bg-blue-700 active:bg-blue-800 shadow rounded active:scale-[0.99] transition-all cursor-pointer text-center text-[15px]"
-              >
-                Set IP Server Laptop (LAN)
-              </button>
-              <div className="text-[11px] leading-relaxed text-gray-500 text-center">
-                Tekan tombol di atas untuk mengisi alamat IP Laptop Anda (misal http://192.168.x.x:3000) agar walkie-talkie terhubung secara online.
-              </div>
+        {/* Koneksi Server (Universal - semua platform) */}
+        <SectionHeader title="Koneksi Server" />
+        <div className="bg-white px-4 py-3 border-b border-gray-200 flex flex-col gap-2">
+          <label className="text-gray-700 font-medium text-[13px]">
+            URL Server (misal: http://192.168.x.x:3000)
+          </label>
+          <div className="flex gap-2">
+            <input
+              type="url"
+              placeholder="http://192.168.x.x:3000"
+              defaultValue={
+                (() => {
+                  try {
+                    return localStorage.getItem("nexvwt_server_url") || "";
+                  } catch {
+                    return "";
+                  }
+                })()
+              }
+              id="server-url-input"
+              className="flex-1 px-3 py-2.5 border border-gray-300 rounded text-[14px] text-gray-900 bg-gray-50 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-colors placeholder:text-gray-400"
+            />
+            <button
+              type="button"
+              onClick={() => {
+                playClickSfx();
+                const input = document.getElementById(
+                  "server-url-input",
+                ) as HTMLInputElement | null;
+                const url = input?.value?.trim() || "";
+                if (url && !/^https?:\/\/.+/.test(url)) {
+                  alert(
+                    "Format URL tidak valid. Gunakan format: http://192.168.x.x:3000",
+                  );
+                  return;
+                }
+                try {
+                  if (url) {
+                    localStorage.setItem("nexvwt_server_url", url);
+                  } else {
+                    localStorage.removeItem("nexvwt_server_url");
+                  }
+                } catch {
+                  // ignore
+                }
+                window.location.reload();
+              }}
+              className="px-4 py-2.5 text-white font-bold bg-blue-600 hover:bg-blue-700 active:bg-blue-800 shadow rounded active:scale-[0.99] transition-all cursor-pointer text-[14px] whitespace-nowrap"
+            >
+              Set
+            </button>
+          </div>
+          <div className="flex items-center justify-between mt-1">
+            <div className="text-[11px] leading-relaxed text-gray-500">
+              Kosongkan dan tekan Set untuk kembali ke server default.
             </div>
-          </>
-        )}
+            {(() => {
+              try {
+                const saved = localStorage.getItem("nexvwt_server_url");
+                if (saved) {
+                  return (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        playClickSfx();
+                        try {
+                          localStorage.removeItem("nexvwt_server_url");
+                        } catch {
+                          // ignore
+                        }
+                        window.location.reload();
+                      }}
+                      className="text-[11px] text-red-500 hover:text-red-700 font-semibold underline cursor-pointer whitespace-nowrap ml-2"
+                    >
+                      Reset
+                    </button>
+                  );
+                }
+              } catch {
+                // ignore
+              }
+              return null;
+            })()}
+          </div>
+          {(() => {
+            try {
+              const saved = localStorage.getItem("nexvwt_server_url");
+              if (saved) {
+                return (
+                  <div className="mt-1 px-3 py-2 bg-emerald-50 border border-emerald-200 rounded text-[12px] text-emerald-700 font-medium">
+                    ✅ Terhubung ke: <span className="font-bold">{saved}</span>
+                  </div>
+                );
+              }
+            } catch {
+              // ignore
+            }
+            return null;
+          })()}
+          <div className="text-[11px] leading-relaxed text-gray-500 text-center">
+            Isi IP laptop Anda agar walkie-talkie terhubung via LAN.
+          </div>
+        </div>
 
         {/* Simpan */}
         <div className="p-4 bg-gray-100">

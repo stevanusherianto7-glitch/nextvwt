@@ -102,7 +102,7 @@ export function RadioControls({
               viewBox="0 0 24 14"
               className="drop-shadow-[0_2px_2px_rgba(0,0,0,1)] mt-1 pointer-events-none"
             >
-              <path d="M12 13L23 1H1L12 13Z" fill="#9ca3af" />
+              <path d="M12 13L23 1H1L12 13Z" fill="#e5e7eb" />
             </svg>
           </button>
         </div>

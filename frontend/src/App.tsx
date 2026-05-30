@@ -43,7 +43,7 @@ const FloatingKaraokePlayer = lazy(() =>
 
 const DEFAULT_CHANNELS = [
   { id: "0", name: "DUKUNGAN & BANTUAN" },
-  { id: "100", name: "CHANNEL 100" },
+  { id: "100", name: "CEK SOUND (ECHO)" },
   { id: "350", name: "MOPIO HITZ" },
   { id: "229", name: "SAHABAT AKP" },
   { id: "7", name: "SATU ASPAL" },
@@ -342,6 +342,8 @@ export default function App() {
 
   const pttLockRef = useRef(false);
   const pttPressedRef = useRef(false);
+  const echoRecorderRef = useRef<MediaRecorder | null>(null);
+  const echoChunksRef = useRef<BlobPart[]>([]);
 
   const togglePtt = useCallback(
     async (e: React.MouseEvent | PointerEvent) => {
@@ -356,6 +358,11 @@ export default function App() {
         webRtcManager.setMute(true);
         pttPressedRef.current = false;
         setTransmitting(false);
+
+        // Echo Logic: Stop recorder
+        if (echoRecorderRef.current && echoRecorderRef.current.state !== "inactive") {
+          echoRecorderRef.current.stop();
+        }
 
         const storeSettings = useAppStore.getState().settings;
         if (storeSettings.tonesStartEnd) {
@@ -403,6 +410,32 @@ export default function App() {
         setActiveStream(webRtcManager.getMediaStream());
         setActiveContext(webRtcManager.getAudioContext());
 
+        // Echo Logic: Start recorder if CH 100
+        if (currentChannel === "100") {
+          const stream = webRtcManager.getMediaStream();
+          if (stream) {
+            echoChunksRef.current = [];
+            const mimeType = MediaRecorder.isTypeSupported("audio/webm;codecs=opus")
+              ? "audio/webm;codecs=opus"
+              : MediaRecorder.isTypeSupported("audio/webm") ? "audio/webm" : "";
+            
+            const recorder = new MediaRecorder(stream, mimeType ? { mimeType } : {});
+            recorder.ondataavailable = (ev) => {
+              if (ev.data.size > 0) echoChunksRef.current.push(ev.data);
+            };
+            recorder.onstop = () => {
+              const blob = new Blob(echoChunksRef.current, { type: mimeType || "audio/webm" });
+              const url = URL.createObjectURL(blob);
+              const audio = new Audio(url);
+              audio.onended = () => URL.revokeObjectURL(url);
+              audio.play().catch(err => console.warn("[Echo] Failed to play:", err));
+            };
+            
+            recorder.start();
+            echoRecorderRef.current = recorder;
+          }
+        }
+
         if (navigator.vibrate) navigator.vibrate(40);
       } catch (err) {
         console.error("[PTT] toggleRecording error:", err);
@@ -421,6 +454,7 @@ export default function App() {
       settings.fullDuplexMode,
       setTransmitting,
       webRtcManager,
+      currentChannel,
     ],
   );
 

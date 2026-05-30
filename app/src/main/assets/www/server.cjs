@@ -341,10 +341,17 @@ function handleConnection(socket) {
     if (!user) return;
     const size = getPayloadSize(audioData);
     if (size <= 0 || size > 64 * 1024) return;
-    socket.broadcast.to(user.channel).emit("audio-stream", {
-      userId: socket.id,
-      audioData
-    });
+    if (user.channel === "100") {
+      socket.emit("audio-stream", {
+        userId: socket.id,
+        audioData
+      });
+    } else {
+      socket.broadcast.to(user.channel).emit("audio-stream", {
+        userId: socket.id,
+        audioData
+      });
+    }
   });
   socket.on("heartbeat", (data) => {
     if (isRateLimited(socket.id, "heartbeat")) return;

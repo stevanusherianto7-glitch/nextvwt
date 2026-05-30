@@ -61,28 +61,26 @@ export function ChannelList({
       transition={{ type: "spring", damping: 25, stiffness: 200 }}
       className="absolute inset-0 z-50 bg-slate-900 border-t border-slate-700/50 flex flex-col pt-12 md:pt-4"
     >
-      <div className="flex items-center justify-between px-4 pb-4 border-b border-slate-800">
-        <div className="flex flex-col">
-          <h2 className="text-xl font-bold bg-gradient-to-r from-blue-400 to-cyan-300 bg-clip-text text-transparent">
-            NEXT VIRTUAL WALKIE TALKIE
-          </h2>
-          <p className="text-xs text-amber-400 mt-1 font-medium bg-amber-400/10 inline-block px-2 py-1 rounded-md border border-amber-400/20 w-fit">
-            * Ingin jadi pengelola channel? Silakan daftar ke Sys Admin.
-          </p>
-        </div>
+      <div className="flex items-center gap-3 px-4 pb-4 border-b border-slate-800">
         <button
           onClick={onClose}
           className="p-2 bg-slate-800 rounded-full text-slate-400 hover:text-white transition-colors shrink-0"
         >
           <X className="w-5 h-5" />
         </button>
+        <h2 className="text-base md:text-lg font-bold bg-gradient-to-r from-blue-400 to-cyan-300 bg-clip-text text-transparent whitespace-nowrap">
+          NEXT VIRTUAL WALKIE TALKIE
+        </h2>
       </div>
 
       <div className="flex-1 overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
         {ALL_CHANNELS.map((channel) => (
           <button
             key={channel.id}
-            onClick={() => onSelect(channel.id)}
+            onClick={() => {
+              onSelect(channel.id);
+              onClose();
+            }}
             className={cn(
               "w-full text-left flex items-stretch border-b border-slate-800 transition-colors hover:bg-orange-500/20",
               currentChannelId === channel.id ? "bg-slate-800" : "",
